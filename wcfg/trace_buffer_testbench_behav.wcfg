@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="trace_buffer_testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="ryuki_datatypes" />
+            <top_module name="trace_buffer_testbench" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="463895487fs"></ZoomEndTime>
+      <Cursor1Time time="220000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="273"></NameColumnWidth>
+      <ValueColumnWidth column_width="185"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject type="logic" fp_name="/trace_buffer_testbench/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/trace_buffer_testbench/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/counter">
+      <obj_property name="ElementShortName">counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">counter[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/test_traces">
+      <obj_property name="ElementShortName">test_traces[0:3]</obj_property>
+      <obj_property name="ObjectShortName">test_traces[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/trace_buffer_testbench/ready_signal">
+      <obj_property name="ElementShortName">ready_signal</obj_property>
+      <obj_property name="ObjectShortName">ready_signal</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/trace_element_in">
+      <obj_property name="ElementShortName">trace_element_in</obj_property>
+      <obj_property name="ObjectShortName">trace_element_in</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/trace_buffer_testbench/data_request">
+      <obj_property name="ElementShortName">data_request</obj_property>
+      <obj_property name="ObjectShortName">data_request</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/signal_counter_trace_release">
+      <obj_property name="ElementShortName">signal_counter_trace_release[31:0]</obj_property>
+      <obj_property name="ObjectShortName">signal_counter_trace_release[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/trace_pointer">
+      <obj_property name="ElementShortName">trace_pointer[31:0]</obj_property>
+      <obj_property name="ObjectShortName">trace_pointer[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/trace_element_out">
+      <obj_property name="ElementShortName">trace_element_out</obj_property>
+      <obj_property name="ObjectShortName">trace_element_out</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/trace_buffer_testbench/data_present">
+      <obj_property name="ElementShortName">data_present</obj_property>
+      <obj_property name="ObjectShortName">data_present</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/trace_buffer_testbench/t_buff/buffer">
+      <obj_property name="ElementShortName">buffer[7:0]</obj_property>
+      <obj_property name="ObjectShortName">buffer[7:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+</wave_config>

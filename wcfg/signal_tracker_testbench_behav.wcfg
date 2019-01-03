@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="signal_tracker_testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="signal_tracker_testbench" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="337146000fs"></ZoomStartTime>
+      <ZoomEndTime time="434746001fs"></ZoomEndTime>
+      <Cursor1Time time="360000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="273"></NameColumnWidth>
+      <ValueColumnWidth column_width="120"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject type="logic" fp_name="/signal_tracker_testbench/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/signal_tracker_testbench/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/counter">
+      <obj_property name="ElementShortName">counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">counter[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/signal_tracker_testbench/tracked_signal">
+      <obj_property name="ElementShortName">tracked_signal</obj_property>
+      <obj_property name="ObjectShortName">tracked_signal</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/sig_track/buffer">
+      <obj_property name="ElementShortName">buffer[0:7][0:0]</obj_property>
+      <obj_property name="ObjectShortName">buffer[0:7][0:0]</obj_property>
+      <obj_property name="Reversed">true</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/sig_track/front">
+      <obj_property name="ElementShortName">front[3:0]</obj_property>
+      <obj_property name="ObjectShortName">front[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/sig_track/rear">
+      <obj_property name="ElementShortName">rear[3:0]</obj_property>
+      <obj_property name="ObjectShortName">rear[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/value_in">
+      <obj_property name="ElementShortName">value_in[31:0]</obj_property>
+      <obj_property name="ObjectShortName">value_in[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/signal_counter_vi">
+      <obj_property name="ElementShortName">signal_counter_vi[31:0]</obj_property>
+      <obj_property name="ObjectShortName">signal_counter_vi[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/time_out">
+      <obj_property name="ElementShortName">time_out[1:0][31:0]</obj_property>
+      <obj_property name="ObjectShortName">time_out[1:0][31:0]</obj_property>
+      <obj_property name="Reversed">false</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/signal_tracker_testbench/range_in">
+      <obj_property name="ElementShortName">range_in[1:0][31:0]</obj_property>
+      <obj_property name="ObjectShortName">range_in[1:0][31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/signal_tracker_testbench/range_out">
+      <obj_property name="ElementShortName">range_out</obj_property>
+      <obj_property name="ObjectShortName">range_out</obj_property>
+   </wvobject>
+</wave_config>

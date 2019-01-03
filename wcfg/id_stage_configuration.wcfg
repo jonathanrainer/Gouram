@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="ryuki_testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="riscv_defines" />
+            <top_module name="ryuki_datatypes" />
+            <top_module name="ryuki_testbench" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="49512681860fs"></ZoomStartTime>
+      <ZoomEndTime time="50157463628fs"></ZoomEndTime>
+      <Cursor1Time time="50050000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="273"></NameColumnWidth>
+      <ValueColumnWidth column_width="169"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="11" />
+   <wvobject type="logic" fp_name="/ryuki_testbench/clk_i">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/ryuki_testbench/tracer/counter">
+      <obj_property name="ElementShortName">counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">counter[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/ryuki_testbench/rst_ni">
+      <obj_property name="ElementShortName">rst_ni</obj_property>
+      <obj_property name="ObjectShortName">rst_ni</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group80">
+      <obj_property name="label">Jumps</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/ex_stage_i/jump_target_o">
+         <obj_property name="ElementShortName">jump_target_o[31:0]</obj_property>
+         <obj_property name="ObjectShortName">jump_target_o[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/id_stage_i/jump_target">
+         <obj_property name="ElementShortName">jump_target[31:0]</obj_property>
+         <obj_property name="ObjectShortName">jump_target[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/jr_stall_o">
+         <obj_property name="ElementShortName">jr_stall_o</obj_property>
+         <obj_property name="ObjectShortName">jr_stall_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/jump_done">
+         <obj_property name="ElementShortName">jump_done</obj_property>
+         <obj_property name="ObjectShortName">jump_done</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/jump_done_q">
+         <obj_property name="ElementShortName">jump_done_q</obj_property>
+         <obj_property name="ObjectShortName">jump_done_q</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/jump_in_dec_i">
+         <obj_property name="ElementShortName">jump_in_dec_i[1:0]</obj_property>
+         <obj_property name="ObjectShortName">jump_in_dec_i[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/jump_in_id_i">
+         <obj_property name="ElementShortName">jump_in_id_i[1:0]</obj_property>
+         <obj_property name="ObjectShortName">jump_in_id_i[1:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group112">
+      <obj_property name="label">ID Stage</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/data_we_id">
+         <obj_property name="ElementShortName">data_we_id</obj_property>
+         <obj_property name="ObjectShortName">data_we_id</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/id_stage_i/data_type_id">
+         <obj_property name="ElementShortName">data_type_id[1:0]</obj_property>
+         <obj_property name="ObjectShortName">data_type_id[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/data_sign_ext_id">
+         <obj_property name="ElementShortName">data_sign_ext_id</obj_property>
+         <obj_property name="ObjectShortName">data_sign_ext_id</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/core/id_stage_i/data_reg_offset_id">
+         <obj_property name="ElementShortName">data_reg_offset_id[1:0]</obj_property>
+         <obj_property name="ObjectShortName">data_reg_offset_id[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/decoder_i/data_req">
+         <obj_property name="ElementShortName">data_req</obj_property>
+         <obj_property name="ObjectShortName">data_req</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/data_req_id">
+         <obj_property name="ElementShortName">data_req_id</obj_property>
+         <obj_property name="ObjectShortName">data_req_id</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/load_store_unit_i/data_req_ex_i">
+         <obj_property name="ElementShortName">data_req_ex_i</obj_property>
+         <obj_property name="ObjectShortName">data_req_ex_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/data_load_event_id">
+         <obj_property name="ElementShortName">data_load_event_id</obj_property>
+         <obj_property name="ObjectShortName">data_load_event_id</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/id_ready_o">
+         <obj_property name="ElementShortName">id_ready_o</obj_property>
+         <obj_property name="ObjectShortName">id_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/id_valid_o">
+         <obj_property name="ElementShortName">id_valid_o</obj_property>
+         <obj_property name="ObjectShortName">id_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/controller_i/load_stall_o">
+         <obj_property name="ElementShortName">load_stall_o</obj_property>
+         <obj_property name="ObjectShortName">load_stall_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/jr_stall">
+         <obj_property name="ElementShortName">jr_stall</obj_property>
+         <obj_property name="ObjectShortName">jr_stall</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/misaligned_stall">
+         <obj_property name="ElementShortName">misaligned_stall</obj_property>
+         <obj_property name="ObjectShortName">misaligned_stall</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/ctrl_busy_o">
+         <obj_property name="ElementShortName">ctrl_busy_o</obj_property>
+         <obj_property name="ObjectShortName">ctrl_busy_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/core/id_stage_i/is_decoding_o">
+         <obj_property name="ElementShortName">is_decoding_o</obj_property>
+         <obj_property name="ObjectShortName">is_decoding_o</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group155">
+      <obj_property name="label">Tracing - ID Unit</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/if_data_i">
+         <obj_property name="ElementShortName">if_data_i</obj_property>
+         <obj_property name="ObjectShortName">if_data_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/trace_element">
+         <obj_property name="ElementShortName">trace_element</obj_property>
+         <obj_property name="ObjectShortName">trace_element</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/tracer/id_tr/jump_done">
+         <obj_property name="ElementShortName">jump_done</obj_property>
+         <obj_property name="ObjectShortName">jump_done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/id_data_o">
+         <obj_property name="ElementShortName">id_data_o</obj_property>
+         <obj_property name="ObjectShortName">id_data_o</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/tracer/id_tr/id_data_ready">
+         <obj_property name="ElementShortName">id_data_ready</obj_property>
+         <obj_property name="ObjectShortName">id_data_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/state">
+         <obj_property name="ElementShortName">state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">state[2:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group588">
+      <obj_property name="label">Queues</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group276">
+      <obj_property name="label">ID Ready Buffer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group253">
+      <obj_property name="label">Jump Done Buffer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/jump_done_buffer/buffer">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">buffer[0:15][0:0]</obj_property>
+         <obj_property name="ObjectShortName">buffer[0:15][0:0]</obj_property>
+         <obj_property name="label">Jump Done Buffer</obj_property>
+         <obj_property name="Reversed">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/jump_done_buffer/front">
+         <obj_property name="ElementShortName">front[4:0]</obj_property>
+         <obj_property name="ObjectShortName">front[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/jump_done_buffer/rear">
+         <obj_property name="ElementShortName">rear[4:0]</obj_property>
+         <obj_property name="ObjectShortName">rear[4:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group560">
+      <obj_property name="label">Trace Buffer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/buffer">
+         <obj_property name="ElementShortName">buffer[7:0]</obj_property>
+         <obj_property name="ObjectShortName">buffer[7:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/data_request">
+         <obj_property name="ElementShortName">data_request</obj_property>
+         <obj_property name="ObjectShortName">data_request</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/data_present">
+         <obj_property name="ElementShortName">data_present</obj_property>
+         <obj_property name="ObjectShortName">data_present</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/front">
+         <obj_property name="ElementShortName">front[3:0]</obj_property>
+         <obj_property name="ObjectShortName">front[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/rear">
+         <obj_property name="ElementShortName">rear[3:0]</obj_property>
+         <obj_property name="ObjectShortName">rear[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ryuki_testbench/tracer/id_tr/t_buffer/trace_element_out">
+         <obj_property name="ElementShortName">trace_element_out</obj_property>
+         <obj_property name="ObjectShortName">trace_element_out</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group394">
+      <obj_property name="label">Illegal Instruction Buffer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+</wave_config>
