@@ -19,6 +19,11 @@ set gouramRTLFiles {
 	signal_tracker.sv
 	trace_buffer.sv
 	wb_tracker.sv
+	gouram.sv
+}
+
+set gouramIncludeFiles {
+	gouram_datatypes.sv
 }
 
 # Set up list of Godai RTL files
@@ -51,9 +56,13 @@ set godaiIncludeFiles {
 }
 
 set rtlFilesFull {}
+set includeFilesFull {}
 
 foreach f $gouramRTLFiles {
     lappend rtlFilesFull [file join $gouramRTLRoot $f]
+}
+foreach f $gouramIncludeFiles {
+    lappend includeFilesFull [file join $gouramIncludeRoot $f]
 }
 
 set simOnlyFiles {}
@@ -72,6 +81,8 @@ foreach f $godaiIncludeFiles {
 # Create project 
 create_project -part xc7vx485tffg1761-2  -force Gouram [file join $workDir]
 add_files -norecurse $rtlFilesFull
+add_files -norecurse $includeFilesFull
+
 add_files -fileset sim_1 $simOnlyFiles
 set_property top gouram_testbench [get_filesets sim_1]
 

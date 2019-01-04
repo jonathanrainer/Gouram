@@ -1,12 +1,6 @@
 import gouram_datatypes::*;
 
 module gouram
-#(
-    parameter INSTR_ADDR_WIDTH = 32,
-    parameter INSTR_DATA_WIDTH = 32,
-    parameter DATA_ADDR_WIDTH = 32,
-    parameter TRACE_BUFFER_SIZE = 64
-)
 (   
     input logic clk,
     input logic rst,

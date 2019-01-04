@@ -18,12 +18,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`ifndef ADDR_WIDTH
-`define ADDR_WIDTH 32
-`endif
-`ifndef DATA_WIDTH
-`define DATA_WIDTH 32
-`endif
+import gouram_datatypes::*;
+
+include "../../include/gouram_config.sv";
 
 module gouram_testbench;
 
@@ -38,7 +35,7 @@ module gouram_testbench;
     logic [31:0] instr_rdata_i;
     
     // Instruction Memory
-    instruction_memory #(`ADDR_WIDTH, `DATA_WIDTH) i_mem  (clk, instr_req_o, instr_addr_o, 
+    instruction_memory #(`INSTR_ADDR_WIDTH, `INSTR_DATA_WIDTH) i_mem  (clk, instr_req_o, instr_addr_o, 
                                 instr_gnt_i, instr_rvalid_i, instr_rdata_i);
     
     // Data memory interface
@@ -52,7 +49,7 @@ module gouram_testbench;
     logic [31:0] data_rdata_i;
     logic        data_err_i;
     
-    data_memory  #(`ADDR_WIDTH, `DATA_WIDTH) d_mem (clk, data_req_o, data_addr_o, data_we_o, data_be_o,
+    data_memory  #(`DATA_ADDR_WIDTH, 32) d_mem (clk, data_req_o, data_addr_o, data_we_o, data_be_o,
                         data_wdata_o, data_gnt_i,  data_rvalid_i, data_rdata_i,
                         data_err_i);
     
@@ -78,7 +75,7 @@ module gouram_testbench;
     
     riscv_core 
         #(
-            0, `DATA_WIDTH
+            0, `INSTR_DATA_WIDTH
         )
         core
         (
@@ -116,13 +113,9 @@ module gouram_testbench;
             .illegal_instr_o(illegal_instr_o)
         );
     
-    trace_output trace_o;
+    trace_format trace_o;
     
-    gouram 
-    #(
-        `ADDR_WIDTH, `DATA_WIDTH, `ADDR_WIDTH, `DATA_WIDTH, 64
-     ) 
-     gouram (
+    gouram #(`INSTR_ADDR_WIDTH, `INSTR_DATA_WIDTH, `DATA_ADDR_WIDTH, `TRACE_BUFFER_SIZE) tracer (
         clk, rst_n, if_busy_o, if_ready_o, branch_decision_o,
          instr_req_o, instr_addr_o, instr_gnt_i,  instr_rvalid_i, instr_rdata_i,
          id_ready_o, jump_done_o, is_decoding_o,illegal_instr_o, branch_req_o, ex_ready_o,
