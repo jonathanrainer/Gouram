@@ -3,7 +3,7 @@
   <spirit:vendor>jonathan-rainer.com</spirit:vendor>
   <spirit:library>Kuuga</spirit:library>
   <spirit:name>Gouram</spirit:name>
-  <spirit:version>1.0</spirit:version>
+  <spirit:version>1.1</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
       <spirit:name>rst</spirit:name>
@@ -499,14 +499,14 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/Gouram_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/Gouram_v1_1.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_f92e9879</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>An add on for Godai that allows pipeline level tracing of processor actions</spirit:description>
+  <spirit:description>A hardware piece that adds pipeline level tracing to Godai</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -540,13 +540,14 @@
       <xilinx:taxonomies>
         <xilinx:taxonomy>/BaseIP</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>Gouram_v1_0</xilinx:displayName>
+      <xilinx:displayName>Gouram</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2019-01-04T15:03:12Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2019-01-08T09:30:00Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:gouram_wrapper:1.0_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
         <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:Gouram:1.0_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
+        <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:Gouram:1.1_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
