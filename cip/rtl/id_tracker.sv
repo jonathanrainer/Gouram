@@ -331,8 +331,8 @@ module id_tracker
     endtask
     
     task check_past_illegal_instruction_values(input integer queue_end);
-        illegal_instruction_range_in <= {queue_end+1, queue_end+1};
-        illegal_instruction_present = jump_done;
+        illegal_instruction_range_in <= {queue_end, queue_end};
+        illegal_instruction_present = illegal_instruction;
         recalculate_illegal_instruction_range <= 1'b1;
     endtask
   

@@ -28,7 +28,7 @@ module instruction_memory
     } State, Next;
     
     int delay_counter = 0;
-    int delay_limit = 1;
+    int delay_limit = 0;
 
   initial
     begin
@@ -63,7 +63,12 @@ module instruction_memory
             rvalid_o = 0;
             if (req_i == 1)
             begin
-                Next = WAITG;
+                if (delay_counter > 0) Next = WAITG;
+                else 
+                begin
+                    gnt_o = 1;
+                    Next = GRANT;
+                end
             end    
         end
         WAITG:
@@ -84,7 +89,7 @@ module instruction_memory
          end
          WAITR:
          begin
-            if (delay_counter < delay_limit) delay_counter++;
+            if (delay_counter < (delay_limit+2)) delay_counter++;
             else 
             begin
                 delay_counter = 0;
