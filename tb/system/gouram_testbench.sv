@@ -107,7 +107,6 @@ module gouram_testbench;
             .id_ready_o(id_ready_o),
             .is_decoding_o(is_decoding_o),
             .jump_done_o(jump_done_o),
-            .data_req_id_o(data_req_id_o),
             .ex_ready_o(ex_ready_o),
             .wb_ready_o(wb_ready_o),
             .illegal_instr_o(illegal_instr_o)
@@ -115,7 +114,7 @@ module gouram_testbench;
     
     trace_format trace_o;
     
-    gouram #(`INSTR_ADDR_WIDTH, `INSTR_DATA_WIDTH, `DATA_ADDR_WIDTH, `TRACE_BUFFER_SIZE) tracer (
+    gouram_wrapper tracer (
         clk, rst_n, if_busy_o, if_ready_o, branch_decision_o,
          instr_req_o, instr_addr_o, instr_gnt_i,  instr_rvalid_i, instr_rdata_i,
          id_ready_o, jump_done_o, is_decoding_o,illegal_instr_o, branch_req_o, ex_ready_o,

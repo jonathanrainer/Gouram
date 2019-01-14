@@ -42,7 +42,7 @@ module gouram_wrapper
     input wb_ready,
     
     // Trace output port
-    output [608:0] trace_data_o
+    output trace_format trace_data_o
 );
 
 gouram gouram

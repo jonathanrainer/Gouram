@@ -20,6 +20,7 @@ set gouramRTLFiles {
 	trace_buffer.sv
 	wb_tracker.sv
 	gouram.sv
+	gouram_wrapper.v
 }
 
 set gouramIncludeFiles {
