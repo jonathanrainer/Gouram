@@ -60,18 +60,7 @@ module gouram_testbench;
     
     logic  ext_perf_counters_i;
     
-    // Tracing Signals
-    logic if_busy_o;
-    logic if_ready_o;
-    logic id_ready_o;
-    logic is_decoding_o;
     logic jump_done_o;
-    logic data_req_id_o;
-    logic ex_ready_o;
-    logic wb_ready_o;
-    logic illegal_instr_o;
-    logic branch_decision_o;
-    logic branch_req_o;
     
     riscv_core 
         #(
@@ -101,24 +90,23 @@ module gouram_testbench;
             .data_rdata_i(data_rdata_i),
             .irq_i(irq_i),
             .fetch_enable_i(1'b1),
-            .core_busy_o(core_busy_o),
-            .if_busy_o(if_busy_o),
-            .if_ready_o(if_ready_o),
-            .id_ready_o(id_ready_o),
-            .is_decoding_o(is_decoding_o),
-            .jump_done_o(jump_done_o),
-            .ex_ready_o(ex_ready_o),
-            .wb_ready_o(wb_ready_o),
-            .illegal_instr_o(illegal_instr_o)
+            .jump_done_o(jump_done_o)
         );
     
     trace_format trace_o;
     
     gouram_wrapper tracer (
-        clk, rst_n, if_busy_o, if_ready_o, branch_decision_o,
-         instr_req_o, instr_addr_o, instr_gnt_i,  instr_rvalid_i, instr_rdata_i,
-         id_ready_o, jump_done_o, is_decoding_o,illegal_instr_o, branch_req_o, ex_ready_o,
-         data_req_o, data_gnt_i, data_rvalid_i, data_addr_o, wb_ready_o, trace_o);
+        .clk(clk),
+        .rst_n(rst_n),
+        .jump_done(jump_done_o),
+        .instr_rvalid(instr_rvalid_i),
+        .instr_rdata(instr_rdata_i),
+        .data_mem_req(data_req_o),
+        .data_mem_addr(data_addr_o),
+        .data_mem_grant(data_gnt_i),
+        .data_mem_rvalid(data_rvalid_i),
+        .trace_data_o(trace_o)
+    );
     
     initial
         begin
@@ -130,8 +118,8 @@ module gouram_testbench;
     
     always
         begin
-            #5 clk = ~clk;      
-            if (trace_o != null && trace_o.addr == 32'h54) $finish;
+            #5 clk = ~clk;
+            if (trace_o != null && trace_o.instruction == 32'h07002E03) $finish;
         end
 
 endmodule

@@ -8,14 +8,11 @@ set includeRoot [file join $thisDir .. include]
 
 # Set up list of Gouram RTL files
 set rtlFiles {
-	advanced_signal_tracker.sv
 	ex_tracker.sv
 	gouram.sv
-	id_tracker.sv
 	if_tracker.sv
 	signal_tracker.sv
 	trace_buffer.sv
-	wb_tracker.sv
 	gouram.sv
 	gouram_wrapper.v
 }

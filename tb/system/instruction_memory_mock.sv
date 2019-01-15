@@ -41,6 +41,8 @@ module instruction_memory
         mem[5]  = 32'h06302823; // SW R0, 0x70, R3
         mem[6]  = 32'h07002E03; // LW R0, 0x70, R28
         mem[7]  = 32'hF4918067; // JALR R3, -0x48, R0 
+        mem[8]  = 32'h00402303; // LW R0, 0x4, R6s (Shouldn't be executed)
+        mem[9]  = 32'h00100093; // ADDI R0, 0x1, R1 (Shouldn't be executed)
         mem[18] = 32'h026283B3; // MUL R5 R6 R7
         mem[19] = 32'h0253B433; // Divide R6 R7 R8 (R8 := R7/R6)
         mem[20] = 32'h006386B3; // ADD R6 R7 R13
