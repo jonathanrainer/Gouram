@@ -7,7 +7,7 @@ module trace_buffer
     // Externally Required Signals
 
     input logic clk,
-    input logic rst,
+    input logic rst_n,
     input bit ready_signal,
     input trace_output trace_element_in,
     input bit data_request,
@@ -57,9 +57,9 @@ module trace_buffer
         
     // Reset behaviour
     
-    always@(posedge rst)
+    always@(posedge rst_n)
     begin
-        if (rst)
+        if (rst_n)
         begin
             front <= -1;
             rear <= -1;

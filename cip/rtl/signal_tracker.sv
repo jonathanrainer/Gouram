@@ -7,7 +7,7 @@ module signal_tracker
     // Externally Required Signals
 
     input logic clk,
-    input logic rst,
+    input logic rst_n,
     input integer counter,
     input logic [TRACKED_SIGNAL_WIDTH-1:0] tracked_signal ,
     input integer value_in,
@@ -20,7 +20,6 @@ module signal_tracker
     input bit update_end,
     input integer previous_end_i,
     input bit recalculate_single_cycle,
-    input bit previous_end_memory,
     input integer cycles_back_to_recall,
     input bit recalculate_back_cycle,
     
@@ -96,9 +95,7 @@ module signal_tracker
                                     (
                                         ($unsigned(buffer_index - 1) % BUFFER_WIDTH != rear) &&
                                         buffer[$unsigned(buffer_index - 1) % BUFFER_WIDTH] &&
-                                        (((counter - 1 - (value_in - i)) >= previous_end && !previous_end_memory) || 
-                                        (((counter - 1 - (value_in - i)) > previous_end && previous_end_memory)
-                                        ))
+                                        ((counter - 1 - (value_in - i)) >= previous_end)   
                                     ) ||
                                 (!buffer[rear - (counter - previous_end)] && !buffer[buffer_index])
                             )
@@ -239,9 +236,9 @@ module signal_tracker
         
     // Reset behaviour
     
-    always@(posedge rst)
+    always@(posedge rst_n)
     begin
-        if (rst)
+        if (rst_n)
         begin
             front <= 0;
             rear <= -1;

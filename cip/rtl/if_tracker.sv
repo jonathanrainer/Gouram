@@ -1,43 +1,32 @@
 module if_tracker
 #(
-    parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
     parameter type trace_format = int
 )
 (
     input logic clk,
-    input logic rst,
-
-    // IF Register ports
-    input logic if_busy,
+    input logic rst_n,
+    
+    // Processor signals for tracing
+    input logic jump_done,
 
     // Instruction Memory Ports
-    input logic                     instr_req,
-    input logic [ADDR_WIDTH-1:0]    instr_addr,
-    input logic                     instr_grant,
     input logic                     instr_rvalid,
     input logic [DATA_WIDTH-1:0]    instr_rdata,
 
-    // Tracing Management
-    input integer counter,
-
     // Outputs
-    output logic if_data_valid,
+    output logic if_data_ready,
     trace_format if_data_o
 );
 
-    trace_format trace_element;
-    // Space to cache results if further processing needs to happen
-    integer cached_counter = -1;
-    // Flag to indicate if data is ready to be sent or not
-    bit data_ready = 0;
-    // IF Pipeline Stage State Machine
-    enum logic [1:0] {
-        START =             2'b00,
-        WAIT_GNT =          2'b01,
-        WAIT_RVALID =       2'b10
-     } state;
+    // State Machine to Control Unit
+    enum bit {
+            IF_START =          1'b0,
+            CHECK_JUMP_DONE =   1'b1
+         } state;
 
+    bit jump_done_buffer = 0;
+    bit [DATA_WIDTH-1:0] cached_instruction = 0;
 
     // Initial behaviour
 
@@ -48,84 +37,80 @@ module if_tracker
 
     // Reset Behaviour
 
-    always @(posedge rst)
+    always @(posedge rst_n)
     begin
-        if (rst == 1)
+        if (rst_n == 1)
         begin
             initialise_device();
         end
     end
 
-    // Creation of record to track instruction's responsibility
+    // Data Acquistion
 
     always_ff @(posedge clk)
     begin
-    unique case (state)
-        START:
-        begin
-            if (data_ready)
+        unique case(state)
+            IF_START:
             begin
-                if_data_o <= trace_element;
-                if_data_valid <= 1;
-                data_ready <= 0;
-            end
-            if (if_busy)
-            begin
-                trace_element <= '{default:0};
-                if (cached_counter != -1)
+                if (if_data_ready) if_data_ready <= 0;
+                // If you detected a load or store that is just reaching the end of its fetch cycle
+                // then store it 
+                if (instr_rvalid && check_load_store(instr_rdata)) 
                 begin
-                    trace_element.if_data.time_start <= cached_counter;
-                    trace_element.if_data.mem_access_req.time_start <= cached_counter;
-                    cached_counter <= -1;
+                    if_data_o.instruction <= instr_rdata;
+                    jump_done_buffer <= jump_done;
+                    state <= CHECK_JUMP_DONE;
                 end
-                else
-                begin
-                    trace_element.if_data.time_start <= counter;
-                    trace_element.if_data.mem_access_req.time_start <= counter;
-                end 
-                state <= WAIT_GNT;
             end
-        end
-        WAIT_GNT:
-        begin
-            if (instr_grant)
+            CHECK_JUMP_DONE:
             begin
-                trace_element.if_data.mem_access_req.time_end <= counter;
-                trace_element.if_data.mem_access_res.time_start <= counter;
-                trace_element.addr <= instr_addr;
-                state <= WAIT_RVALID;
-            end
-        end
-        WAIT_RVALID:
-        begin
-            if (instr_rvalid)
-            begin
-                trace_element.instruction <= instr_rdata;
-                trace_element.if_data.time_end <= counter;
-                trace_element.if_data.mem_access_res.time_end <= counter;
-                data_ready <= 1;
-                if (instr_req) 
+                // If at any point, jump done is detected before the next rvalid signal then 
+                // this fetch is invalid so should be ignored.
+                if (cached_instruction != 0)
                 begin
-                    cached_counter <= counter;
+                    if_data_o.instruction <= cached_instruction;
+                    cached_instruction <= 32'h0;
                 end
-                state <= START;
+                if (if_data_ready) if_data_ready <= 0;
+                if(jump_done_buffer || jump_done) 
+                begin
+                    if_data_o <= '{default:0};
+                    jump_done_buffer <= 1'b0;
+                    state <= IF_START;
+                end
+                else if (instr_rvalid)
+                begin
+                    if (check_load_store(instr_rdata))
+                    begin
+                        cached_instruction <= instr_rdata;
+                        state <= CHECK_JUMP_DONE;
+                    end
+                    else 
+                    begin
+                        jump_done_buffer <= 1'b0;
+                        state <= IF_START;
+                    end
+                    if_data_ready <= 1'b1;
+                end
             end
-        end
-    endcase
-    end
-    
-    always_ff@(posedge clk)
-    begin
-        if (if_data_valid) if_data_valid <= 0;
+        endcase
+        
+        // If it isn't then don't do anything, if it is then send the data out to the next process.
     end
 
     // Initialise the whole trace unit
 
     task initialise_device();
         begin
-            state <= START;
-            if_data_valid <= 0;
+            if_data_ready <= 0;
+            if_data_o <= '{default:0};
+            state <= IF_START;
         end
     endtask
+    
+    function bit check_load_store(input bit[DATA_WIDTH-1:0] instruction);
+        return instruction ==? 32'h??????83 || instruction ==? 32'h??????03 || 
+               instruction ==? 32'h??????23 || instruction ==? 32'h??????a3;
+    endfunction
 
 endmodule
