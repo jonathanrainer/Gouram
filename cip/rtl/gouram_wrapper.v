@@ -19,7 +19,7 @@ module gouram_wrapper
     input                           data_mem_grant,
     input                           data_mem_rvalid, 
     
-    output [128:0] trace_data_o
+    output [127:0] trace_data_o
 );
 
 gouram gouram
