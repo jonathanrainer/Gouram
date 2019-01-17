@@ -4,7 +4,7 @@ module gouram
 #(
     parameter INSTR_DATA_WIDTH = 32,
     parameter DATA_ADDR_WIDTH = 32,
-    parameter TRACE_BUFFER_SIZE = 64
+    parameter TRACE_BUFFER_SIZE = 8
 )
 (   
     input logic clk,
@@ -34,7 +34,7 @@ module gouram
     trace_format if_data_o;
     
     if_tracker #(INSTR_DATA_WIDTH, trace_format) if_tr (.*);
-    ex_tracker #(DATA_ADDR_WIDTH, 256, TRACE_BUFFER_SIZE, trace_format) ex_tr(.if_data_i(if_data_o), 
+    ex_tracker #(DATA_ADDR_WIDTH, 64, TRACE_BUFFER_SIZE, trace_format) ex_tr(.if_data_i(if_data_o), 
                     .ex_data_o(trace_data_o), .*);
     initial
     begin

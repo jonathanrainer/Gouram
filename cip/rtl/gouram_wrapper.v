@@ -22,7 +22,11 @@ module gouram_wrapper
     output [127:0] trace_data_o
 );
 
-gouram gouram
+gouram
+#(
+    `INSTR_DATA_WIDTH, `DATA_ADDR_WIDTH, 8
+)
+gouram
 (
 	.clk(clk),
 	.rst_n(rst_n),

@@ -43,8 +43,8 @@ module ex_tracker
     bit update_end = 0;
     
     // Buffer to track the start of memory transactions
-    integer data_mem_req_value_in = 0;
-    integer data_mem_req_time_out [1:0] = {0,0};
+    integer data_mem_req_value_in;
+    integer data_mem_req_time_out [1:0];
     bit data_mem_req_recalculate_time = 1'b0;
     signal_tracker  #(1, SIGNAL_BUFFER_SIZE) data_mem_req_buffer (
         .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_req), .value_in(data_mem_req_value_in),
@@ -53,8 +53,8 @@ module ex_tracker
     logic data_mem_req_present = 0;
     
     // Buffer to track the rvalid or the end of memory transactions
-    integer data_mem_rvalid_value_in = 0;
-    integer data_mem_rvalid_time_out [1:0] = {0,0};
+    integer data_mem_rvalid_value_in;
+    integer data_mem_rvalid_time_out [1:0];
     bit data_mem_rvalid_recalculate_time = 1'b0;
     signal_tracker  #(1, SIGNAL_BUFFER_SIZE) data_mem_rvalid_buffer (
         .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_rvalid), .value_in(data_mem_rvalid_value_in),
@@ -65,7 +65,7 @@ module ex_tracker
     // Buffer to track Memory Addresses
     integer data_mem_addr_cycles_back = 0;
     bit data_mem_addr_recalculate_back_cycle = 1'b0;
-    bit [DATA_ADDR_WIDTH-1:0] recalled_addr = 0;
+    bit [DATA_ADDR_WIDTH-1:0] recalled_addr;
     signal_tracker  #(DATA_ADDR_WIDTH, SIGNAL_BUFFER_SIZE) data_mem_addr_buffer (
         .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_addr), 
         .cycles_back_to_recall(data_mem_addr_cycles_back), 

@@ -29,12 +29,12 @@ module trace_buffer
     begin
         if (ready_signal)
         begin
-            rear = (rear + 1) % BUFFER_WIDTH;
-            buffer[rear] = trace_element_in;
+            rear <= (rear + 1) % BUFFER_WIDTH;
+            buffer[(rear + 1) % BUFFER_WIDTH] <= trace_element_in;
             size++;
-            if (rear == front && size == BUFFER_WIDTH) front = (front + 1) % BUFFER_WIDTH;
+            if (rear == front && size == BUFFER_WIDTH) front <= (front + 1) % BUFFER_WIDTH;
             if (front == -1) front = 0;
-            data_present = 1'b1;
+            data_present <= 1'b1;
         end
     end
     
