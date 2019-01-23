@@ -15,56 +15,68 @@ module trace_buffer
     // Outputs
     
     output bit data_present,
+    output bit data_valid,
     output trace_output trace_element_out
 );
 
-    trace_output buffer [BUFFER_WIDTH-1:0];
-    bit signed [$clog2(BUFFER_WIDTH):0] front; 
-    bit signed [$clog2(BUFFER_WIDTH):0] rear;
+    (* dont_touch = "yes" *) trace_output buffer [BUFFER_WIDTH-1:0];
+    (* dont_touch = "yes" *) bit signed [$clog2(BUFFER_WIDTH):0] front; 
+    (* dont_touch = "yes" *) bit signed [$clog2(BUFFER_WIDTH):0] rear;
+    integer count;
     
-    integer size = 0;
     
-    // Clocked Part (Data Collection)
-    always@(negedge clk)
+    enum bit {
+        START = 1'b0,
+        OUTPUT_DATA = 1'b1
+    } output_state;
+   
+    always_ff@(posedge clk)
     begin
         if (ready_signal)
         begin
             rear <= (rear + 1) % BUFFER_WIDTH;
-            buffer[(rear + 1) % BUFFER_WIDTH] <= trace_element_in;
-            size++;
-            if (rear == front && size == BUFFER_WIDTH) front <= (front + 1) % BUFFER_WIDTH;
-            if (front == -1) front = 0;
-            data_present <= 1'b1;
+            buffer[rear] <= trace_element_in;
+            count <= count + 1;
         end
-    end
-    
-    // Unclocked Part (Data Output)
-    always@ (posedge data_request)
-    begin
-        if (data_present)
-        begin
-            trace_element_out = buffer[front];
-            front = (front + 1) % BUFFER_WIDTH;
-            size--;
-            if (size == 0)
+        unique case (output_state)
+            START:
             begin
-                front = -1;
-                rear = -1;
-                data_present = 1'b0;
+                if (data_valid) data_valid <= 1'b0;
+                else if (data_request && !(count == 0))
+                begin
+                    output_state <= OUTPUT_DATA;
+                end
             end
-        end
-    end
-        
-    // Reset behaviour
-    
-    always@(posedge rst_n)
-    begin
-        if (rst_n)
+            OUTPUT_DATA:
+            begin
+                data_valid <= 1'b1;
+                trace_element_out <= buffer[front];
+                front <= (front + 1) % BUFFER_WIDTH;
+                count <= count - 1;
+                output_state <= START;
+            end
+        endcase
+        if (!count) data_present <= 1'b0;   
+        else data_present <= 1'b1;
+        if (!rst_n)
         begin
-            front <= -1;
-            rear <= -1;
-            buffer <= '{default:0};
-        end
+            initialise_module();
+        end 
     end
+    
+    initial
+    begin
+        initialise_module();
+    end
+    
+    task initialise_module();
+        front <= 0;
+        rear <= 0;
+        count <= 0;
+        buffer <= '{default:0};
+        output_state <= START;
+        data_valid <= 1'b0;
+        data_present <= 1'b0;
+    endtask
 
 endmodule

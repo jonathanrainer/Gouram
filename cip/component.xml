@@ -3,7 +3,7 @@
   <spirit:vendor>jonathan-rainer.com</spirit:vendor>
   <spirit:library>Kuuga</spirit:library>
   <spirit:name>Gouram</spirit:name>
-  <spirit:version>2.2</spirit:version>
+  <spirit:version>2.3</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
       <spirit:name>rst_n</spirit:name>
@@ -58,7 +58,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>df0efbc6</spirit:value>
+            <spirit:value>ba6b76f1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -74,7 +74,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>df0efbc6</spirit:value>
+            <spirit:value>ba6b76f1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -194,19 +194,6 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>data_mem_grant</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
         <spirit:name>data_mem_rvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
@@ -274,13 +261,17 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>rtl/signal_tracker_if.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>rtl/trace_buffer.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>rtl/gouram_wrapper.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_bda08ddf</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_172cf868</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -311,6 +302,10 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>rtl/signal_tracker_if.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>rtl/trace_buffer.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
@@ -322,14 +317,14 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/Gouram_v2_2.tcl</spirit:name>
+        <spirit:name>xgui/Gouram_v2_3.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_f92e9879</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>A tracer to allow hardware level tracing for Godai</spirit:description>
+  <spirit:description>An add-on to Godai that makes it possible to trace memory accessing instructions at a very low granularity.</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -366,18 +361,18 @@
       <xilinx:displayName>Gouram</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2019-01-17T06:25:42Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2019-01-23T10:22:58Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:gouram_wrapper:1.0_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
         <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:Gouram:1.0_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
-        <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:Gouram:2.2_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
+        <xilinx:tag xilinx:name="jonathan-rainer.com:Kuuga:Gouram:2.3_ARCHIVE_LOCATION">/home/jonathanrainer/Documents/PhD/Kuuga/Gouram/work/cip/Gouram</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.2</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="e8165dec"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="c4cb5278"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="c9843616"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="29d5d4a0"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="be424271"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="0c85487b"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
