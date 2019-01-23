@@ -15,6 +15,7 @@ set rtlFiles {
 	trace_buffer.sv
 	gouram.sv
 	gouram_wrapper.v
+	signal_tracker_if.sv
 }
 
 set includeFiles {

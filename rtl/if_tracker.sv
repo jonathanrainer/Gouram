@@ -16,7 +16,7 @@ module if_tracker
 
     // Outputs
     output logic if_data_ready,
-    trace_format if_data_o
+    (* dont_touch = "yes" *) trace_format if_data_o
 );
 
     // State Machine to Control Unit
@@ -35,20 +35,11 @@ module if_tracker
         initialise_device();
     end
 
-    // Reset Behaviour
-
-    always @(posedge rst_n)
-    begin
-        if (rst_n == 1)
-        begin
-            initialise_device();
-        end
-    end
-
     // Data Acquistion
 
     always_ff @(posedge clk)
     begin
+        if (!rst_n) initialise_device();
         unique case(state)
             IF_START:
             begin

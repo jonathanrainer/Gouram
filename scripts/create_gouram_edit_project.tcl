@@ -18,10 +18,12 @@ set gouramRTLFiles {
 	trace_buffer.sv
 	gouram.sv
 	gouram_wrapper.v
+	signal_tracker_if.sv
 }
 
 set gouramIncludeFiles {
 	gouram_datatypes.sv
+	gouram_config.sv
 }
 
 # Set up list of Godai RTL files
@@ -67,6 +69,7 @@ set simOnlyFiles {}
 lappend simOnlyFiles [file join $thisDir .. tb system gouram_testbench.sv]
 lappend simOnlyFiles [file join $thisDir .. tb system instruction_memory_mock.sv]
 lappend simOnlyFiles [file join $thisDir .. tb system data_memory_mock.sv]
+lappend simOnlyFiles [file join $thisDir .. wcfg post_synth_config.wcfg]
 
 foreach f $godaiRTLFiles {
 	lappend simOnlyFiles [file join $godaiRTLRoot $f]

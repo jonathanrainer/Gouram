@@ -20,7 +20,6 @@ module gouram
     // Data Memory Ports
     input logic                         data_mem_req,
     input logic [DATA_ADDR_WIDTH-1:0]   data_mem_addr,
-    input logic                         data_mem_grant,
     input logic                         data_mem_rvalid,
 
     // Trace output port
@@ -28,7 +27,7 @@ module gouram
 );
 
     // Monotonic Counter to Track Timing for Each Component
-    integer counter;
+    (* dont_touch = "yes" *) integer signed counter;
 
     logic if_data_ready;
     trace_format if_data_o;
@@ -41,21 +40,12 @@ module gouram
         initialise_device();
     end
 
-    // Reset Behaviour
-
-    always @(posedge rst_n)
-    begin
-        if (rst_n == 1)
-        begin
-            initialise_device();
-        end
-    end
-
     // Monotonic Counter (Counts clock cycles)
 
-    always @(posedge clk)
+    always_ff @(posedge clk)
     begin
-        counter <= counter + 1;
+        if (!rst_n) initialise_device();
+        else counter <= counter + 1;
     end
     
     // Initialise the whole trace unit

@@ -103,7 +103,6 @@ module gouram_testbench;
         .instr_rdata(instr_rdata_i),
         .data_mem_req(data_req_o),
         .data_mem_addr(data_addr_o),
-        .data_mem_grant(data_gnt_i),
         .data_mem_rvalid(data_rvalid_i),
         .trace_data_o(trace_o)
     );
@@ -113,7 +112,7 @@ module gouram_testbench;
             // Set up initial signals
             clk = 0;
             rst_n = 0;
-            #50 rst_n = 1;
+            #250 rst_n = 1;
         end
     
     always

@@ -14,22 +14,21 @@ module ex_tracker
 
     // Inputs from ID Tracker
     input logic if_data_ready,
-    trace_format if_data_i,
+    input trace_format if_data_i,
     
     // Inputs from Memory Phase
     input logic data_mem_req,
     input logic [DATA_ADDR_WIDTH-1:0] data_mem_addr,
-    input logic data_mem_grant,
     input logic data_mem_rvalid,
     
     // Outputs to EX Tracker
-    trace_format ex_data_o
+   (* dont_touch = "yes" *) output trace_format ex_data_o
 );
 
     trace_format trace_element;
     
     // State Machine to Control Unit
-    enum logic [2:0] {
+    enum bit [2:0] {
             EXECUTION_START =       3'b000,
             GET_DATA_FROM_BUFFER =  3'b001,
             CHECK_MEMORY_REQS =     3'b010,
@@ -39,52 +38,38 @@ module ex_tracker
             OUTPUT_RESULT =         3'b110
          } state;
          
-    integer previous_end = 0;
-    bit update_end = 0;
+    integer previous_end;
+    bit addr_found;
+    bit rvalid_time_found;
+    bit rvalid_scan_necessary;
     
-    // Buffer to track the start of memory transactions
-    integer data_mem_req_value_in;
-    integer data_mem_req_time_out [1:0];
-    bit data_mem_req_recalculate_time = 1'b0;
-    signal_tracker  #(1, SIGNAL_BUFFER_SIZE) data_mem_req_buffer (
-        .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_req), .value_in(data_mem_req_value_in),
-        .time_out(data_mem_req_time_out), .recalculate_time(data_mem_req_recalculate_time), .previous_end_i(previous_end)
-        );
-    logic data_mem_req_present = 0;
+    signal_tracker_if #(1) data_mem_req_port (clk, rst_n, counter, data_mem_req);
+    signal_tracker_if #(1) data_mem_rvalid_port (clk, rst_n, counter, data_mem_rvalid);
+    signal_tracker_if #(DATA_ADDR_WIDTH) data_mem_addr_port (clk, rst_n, counter, data_mem_addr);
     
-    // Buffer to track the rvalid or the end of memory transactions
-    integer data_mem_rvalid_value_in;
-    integer data_mem_rvalid_time_out [1:0];
-    bit data_mem_rvalid_recalculate_time = 1'b0;
-    signal_tracker  #(1, SIGNAL_BUFFER_SIZE) data_mem_rvalid_buffer (
-        .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_rvalid), .value_in(data_mem_rvalid_value_in),
-        .time_out(data_mem_rvalid_time_out), .recalculate_time(data_mem_rvalid_recalculate_time), .previous_end_i(previous_end)
-        );
-    logic data_mem_rvalid_present = 0;
-    
-    // Buffer to track Memory Addresses
-    integer data_mem_addr_cycles_back = 0;
-    bit data_mem_addr_recalculate_back_cycle = 1'b0;
-    bit [DATA_ADDR_WIDTH-1:0] recalled_addr;
-    signal_tracker  #(DATA_ADDR_WIDTH, SIGNAL_BUFFER_SIZE) data_mem_addr_buffer (
-        .clk(clk), .rst_n(rst_n), .counter(counter), .tracked_signal(data_mem_addr), 
-        .cycles_back_to_recall(data_mem_addr_cycles_back), 
-        .recalculate_back_cycle(data_mem_addr_recalculate_back_cycle),
-        .signal_recall(recalled_addr));
+    signal_tracker_time_test  #(SIGNAL_BUFFER_SIZE) data_mem_req_buffer (
+        data_mem_req_port.TimeTest
+    );
+    integer data_mem_req_present;
+    signal_tracker_time_test  #(SIGNAL_BUFFER_SIZE) data_mem_rvalid_buffer (
+        data_mem_rvalid_port.TimeTest
+    );
+    integer data_mem_rvalid_present;
+    signal_tracker_value_find  #(SIGNAL_BUFFER_SIZE) data_mem_addr_buffer (
+        data_mem_addr_port.ValueFind
+    );
     
     // Trace Buffer
-     bit data_request = 1'b0;
+     bit data_request;
      bit data_present;
+     bit data_valid; 
      trace_format buffer_output;
      trace_buffer #(TRACE_BUFFER_SIZE, trace_format) t_buffer (
         .clk(clk), .rst_n(rst_n), .ready_signal(if_data_ready), .trace_element_in(if_data_i), 
-        .data_request(data_request), .data_present(data_present), .trace_element_out(buffer_output)
+        .data_request(data_request), .data_present(data_present), .trace_element_out(buffer_output),
+        .data_valid(data_valid)    
      );
-    
-    always @(posedge rst_n)
-    begin
-        initialise_module();
-    end
+  
             
     initial
     begin
@@ -93,6 +78,7 @@ module ex_tracker
          
     always_ff @(posedge clk)
     begin
+        if (!rst_n) initialise_module();
         unique case(state)
             EXECUTION_START:
             begin
@@ -104,39 +90,46 @@ module ex_tracker
             end
             GET_DATA_FROM_BUFFER:
             begin
-                data_request <= 1'b0;
-                // Copy in data to the internal trace buffer
-                trace_element <= buffer_output;
-                // Set ex_ready queue input values to read back in next cycle.
-                check_past_data_mem_req_values(counter - previous_end + 1);
-                state <= CHECK_MEMORY_REQS;
+                if (data_valid)
+                begin
+                    data_request <= 1'b0;
+                    // Copy in data to the internal trace buffer
+                    trace_element <= buffer_output;
+                    // Set ex_ready queue input values to read back in next cycle.
+                    check_past_data_mem_req_values(counter - previous_end + 1);
+                    state <= CHECK_MEMORY_REQS;
+                end
             end
             CHECK_MEMORY_REQS:
             begin
-                data_mem_req_recalculate_time <= 0;
-                state <= CHECK_MEMORY_RVALID;
-                // Check if the memory occured in the tracked past
-                if (data_mem_req_time_out[0] != -1) 
+                if (data_mem_req_port.data_valid)
                 begin
-                    trace_element.mem_trans_time_start <= data_mem_req_time_out[0];
-                    check_past_data_mem_rvalid_values(counter - data_mem_req_time_out[0]);
-                    check_past_data_mem_addr_values(counter - data_mem_req_time_out[0]);
+                    data_mem_req_port.recalculate_time <= 0;
+                    state <= CHECK_MEMORY_RVALID;
+                    // Check if the memory occured in the tracked past
+                    if (data_mem_req_port.time_out[0] != -1) 
+                    begin
+                        trace_element.mem_trans_time_start <= data_mem_req_port.time_out[0];
+                        check_past_data_mem_rvalid_values(counter - data_mem_req_port.time_out[0]);
+                        check_past_data_mem_addr_values(counter - data_mem_req_port.time_out[0]);
+                    end
+                    else if (data_mem_req_present != -1) 
+                    begin
+                        trace_element.mem_trans_time_start <= data_mem_req_present;
+                        check_past_data_mem_rvalid_values(data_mem_req_present);
+                        check_past_data_mem_addr_values(counter-data_mem_req_present);
+                    end
+                    else if (data_mem_req) 
+                    begin
+                        trace_element.mem_trans_time_start <= counter;
+                        check_past_data_mem_rvalid_values(counter);
+                        check_past_data_mem_addr_values(0);
+                    end
+                    // If all these fail then the memory req hasn't yet been asserted and
+                    // it just needs to be polled every cycle until it does.
+                    else state <= SCAN_MEMORY_REQ;
                 end
-                else if (data_mem_req_present) 
-                begin
-                    trace_element.mem_trans_time_start <= counter - 1;
-                    check_past_data_mem_rvalid_values(counter - 1);
-                    check_past_data_mem_addr_values(1);
-                end
-                else if (data_mem_req) 
-                begin
-                    trace_element.mem_trans_time_start <= counter;
-                    check_past_data_mem_rvalid_values(counter);
-                    check_past_data_mem_addr_values(0);
-                end
-                // If all these fail then the memory req hasn't yet been asserted and
-                // it just needs to be polled every cycle until it does.
-                else state <= SCAN_MEMORY_REQ;
+                if (data_mem_req_present == -1 && data_mem_req) data_mem_req_present = counter;
             end
             SCAN_MEMORY_REQ:
             begin
@@ -149,32 +142,49 @@ module ex_tracker
             end
             CHECK_MEMORY_RVALID:
             begin
-                data_mem_rvalid_recalculate_time <= 0;
-                data_mem_addr_recalculate_back_cycle <=0;
-                trace_element.mem_addr <= recalled_addr;
-                state <= OUTPUT_RESULT;
-                // Check if the memory occured in the tracked past
-                if (data_mem_rvalid_time_out[0] != -1) 
+                if (!addr_found && data_mem_addr_port.data_valid)
                 begin
-                    trace_element.mem_trans_time_end <= data_mem_rvalid_time_out[0];
-                    previous_end <= data_mem_rvalid_time_out[0];
-                    update_end <= 1'b1;
+                    trace_element.mem_addr <= data_mem_addr_port.signal_recall;
+                    data_mem_addr_port.recalculate_back_cycle <= 0;
+                    addr_found <= 1'b1;
                 end
-                else if (data_mem_rvalid_present) 
+                if (!rvalid_time_found && data_mem_rvalid_port.data_valid)
                 begin
-                    trace_element.mem_trans_time_end <= counter - 1;
-                    previous_end <= counter - 1;
-                    update_end <= 1'b1;
+                    rvalid_time_found  <= 1'b1;
+                    data_mem_rvalid_port.recalculate_time <= 0;
+                    // Check if the memory occured in the tracked past
+                    if (data_mem_rvalid_port.time_out[0] != -1) 
+                    begin
+                        trace_element.mem_trans_time_end <= data_mem_rvalid_port.time_out[0];
+                        previous_end <= data_mem_rvalid_port.time_out[0];
+                    end
+                    else if (data_mem_rvalid_present != -1) 
+                    begin
+                        trace_element.mem_trans_time_end <= data_mem_rvalid_present;
+                        previous_end <= data_mem_rvalid_present;
+                    end
+                    else if (data_mem_rvalid) 
+                    begin
+                        trace_element.mem_trans_time_end <= counter;
+                        previous_end <= counter;
+                    end
+                    // If all these fail then the memory rvalid hasn't yet been asserted and
+                    // it just needs to be polled every cycle until it does.
+                    else rvalid_scan_necessary = 1'b1;
                 end
-                else if (data_mem_rvalid) 
+                if ((data_mem_rvalid_present == -1) && data_mem_rvalid)  data_mem_rvalid_present = counter;
+                // Make a decision as to which state to go to next
+                if (rvalid_time_found && addr_found)
                 begin
-                    trace_element.mem_trans_time_end <= counter;
-                    previous_end <= counter;
-                    update_end <= 1'b1;
+                    rvalid_time_found <= 1'b0;
+                    addr_found <= 1'b0;
+                    if (rvalid_scan_necessary) 
+                    begin
+                        state <= SCAN_MEMORY_RVALID;
+                        rvalid_scan_necessary <= 1'b0;
+                    end
+                    else state <= OUTPUT_RESULT;
                 end
-                // If all these fail then the memory rvalid hasn't yet been asserted and
-                // it just needs to be polled every cycle until it does.
-                else state <= SCAN_MEMORY_RVALID;
             end
             SCAN_MEMORY_RVALID:
             begin
@@ -182,7 +192,6 @@ module ex_tracker
                 begin 
                     trace_element.mem_trans_time_end <= counter;
                     previous_end <= counter;
-                    update_end <= 1'b1;
                     state <= OUTPUT_RESULT;
                 end 
             end
@@ -197,23 +206,30 @@ module ex_tracker
     task initialise_module();
         state <= EXECUTION_START;
         trace_element <= '{default:0};
+        data_request <= 1'b0;
+        previous_end <= 0;
+        addr_found <= 1'b0;
+        rvalid_time_found <= 1'b0;
+        rvalid_scan_necessary <= 1'b0;
     endtask
         
     task check_past_data_mem_req_values(input integer queue_input);
-        data_mem_req_value_in <= queue_input;
-        data_mem_req_present <= data_mem_req;
-        data_mem_req_recalculate_time <= 1'b1;
+        data_mem_req_port.value_in <= queue_input;
+        if (data_mem_req) data_mem_req_present <= counter;
+        else data_mem_req_present <= -1;
+        data_mem_req_port.recalculate_time <= 1'b1;
     endtask
     
     task check_past_data_mem_rvalid_values(input integer queue_input);
-            data_mem_rvalid_value_in <= queue_input;
-            data_mem_rvalid_present <= data_mem_rvalid;
-            data_mem_rvalid_recalculate_time <= 1'b1;
+            data_mem_rvalid_port.value_in <= queue_input;
+            if (data_mem_rvalid) data_mem_rvalid_present <= counter;
+            else data_mem_rvalid_present <= -1;
+            data_mem_rvalid_port.recalculate_time <= 1'b1;
         endtask
     
     task check_past_data_mem_addr_values(input integer queue_input);
-        data_mem_addr_cycles_back <= queue_input;
-        data_mem_addr_recalculate_back_cycle <= 1'b1;
+        data_mem_addr_port.cycles_back_to_recall <= queue_input;
+        data_mem_addr_port.recalculate_back_cycle <= 1'b1;
     endtask
     
         

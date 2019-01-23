@@ -16,13 +16,12 @@ module gouram_wrapper
 
     input                           data_mem_req,
     input [`DATA_ADDR_WIDTH-1:0]    data_mem_addr,
-    input                           data_mem_grant,
     input                           data_mem_rvalid, 
     
     output [127:0] trace_data_o
 );
 
-gouram
+ gouram
 #(
     `INSTR_DATA_WIDTH, `DATA_ADDR_WIDTH, 8
 )
@@ -34,7 +33,6 @@ gouram
 	.instr_rvalid(instr_rvalid),
 	.instr_rdata(instr_rdata),
 	.data_mem_req(data_mem_req),
-	.data_mem_grant(data_mem_grant),
 	.data_mem_rvalid(data_mem_rvalid),
 	.data_mem_addr(data_mem_addr),
 	.trace_data_o(trace_data_o)
