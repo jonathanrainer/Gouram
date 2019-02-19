@@ -2,13 +2,13 @@
 `define TDATA_WIDTH 32
 `endif
 `ifndef INSTR_ADDR_WIDTH
-`define INSTR_ADDR_WIDTH 32
+`define INSTR_ADDR_WIDTH 16
 `endif
 `ifndef INSTR_DATA_WIDTH
 `define INSTR_DATA_WIDTH 32
 `endif
 `ifndef DATA_ADDR_WIDTH
-`define DATA_ADDR_WIDTH 32
+`define DATA_ADDR_WIDTH 16
 `endif
 `ifndef TRACE_BUFFER_SIZE
 `define TRACE_BUFFER_SIZE 64

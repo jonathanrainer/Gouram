@@ -9,59 +9,16 @@ set gouramIncludeRoot [file join $thisDir .. include]
 set godaiRTLRoot [file join $godaiDir rtl]
 set godaiIncludeRoot [file join $godaiDir include]
 
-# Set up list of Gouram RTL files
-set gouramRTLFiles {
-	ex_tracker.sv
-	gouram.sv
-	if_tracker.sv
-	signal_tracker.sv
-	trace_buffer.sv
-	gouram.sv
-	gouram_wrapper.v
-	signal_tracker_if.sv
-}
-
-set gouramIncludeFiles {
-	gouram_datatypes.sv
-	gouram_config.sv
-}
-
-# Set up list of Godai RTL files
-set godaiRTLFiles {
-    alu.sv
-    alu_div.sv
-    cluster_clock_gating.sv
-    compressed_decoder.sv
-    controller.sv
-    cs_registers.sv
-    debug_unit.sv
-    decoder.sv
-    exc_controller.sv
-    ex_stage.sv
-    hwloop_controller.sv
-    hwloop_regs.sv
-    id_stage.sv
-    if_stage.sv
-    load_store_unit.sv
-    mult.sv
-    prefetch_buffer.sv
-    register_file_ff.sv
-    riscv_core.sv
-}
-
-# Set up list of Godai Include files
-set godaiIncludeFiles {
-    riscv_config.sv
-    riscv_defines.sv 
-}
+source [file join $thisDir gouram_manifest.tcl]
+source [file join $godaiDir scripts godai_manifest.tcl]
 
 set rtlFilesFull {}
 set includeFilesFull {}
 
-foreach f $gouramRTLFiles {
+foreach f $GouramRTLFiles {
     lappend rtlFilesFull [file join $gouramRTLRoot $f]
 }
-foreach f $gouramIncludeFiles {
+foreach f $GouramIncludeFiles {
     lappend includeFilesFull [file join $gouramIncludeRoot $f]
 }
 
@@ -71,11 +28,11 @@ lappend simOnlyFiles [file join $thisDir .. tb system instruction_memory_mock.sv
 lappend simOnlyFiles [file join $thisDir .. tb system data_memory_mock.sv]
 lappend simOnlyFiles [file join $thisDir .. wcfg post_synth_config.wcfg]
 
-foreach f $godaiRTLFiles {
+foreach f $GodaiRTLFiles {
 	lappend simOnlyFiles [file join $godaiRTLRoot $f]
 }
 
-foreach f $godaiIncludeFiles {
+foreach f $GodaiIncludeFiles {
 	lappend simOnlyFiles [file join $godaiIncludeRoot $f]
 }
 
