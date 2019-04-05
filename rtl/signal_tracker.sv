@@ -23,7 +23,7 @@ module signal_tracker_value_find
         if (port.recalculate_back_cycle) 
         begin
             port.data_valid <= 1'b1;
-            port.signal_recall <= buffer[$unsigned(rear-port.cycles_back_to_recall) % BUFFER_WIDTH];
+            port.signal_recall <= buffer[$unsigned(rear-(port.cycles_back_to_recall)) % BUFFER_WIDTH];
         end
         if (port.recalculate_back_cycle && port.data_valid) port.data_valid <= 1'b0;
         if (!port.rst_n)
@@ -101,21 +101,20 @@ module signal_tracker_time_test
                     if (!found_start && buffer[buffer_index] && ((port.counter - (port.value_in - i)) >= previous_end)) 
                     begin
                         port.time_out[0] <= port.counter - (port.value_in - i);
-                        if ((($unsigned(buffer_index - 1) % BUFFER_WIDTH != rear) &&
-                            !buffer[$unsigned(buffer_index - 1) % BUFFER_WIDTH]) ||
-                            buffer_index == (rear + 1) % BUFFER_WIDTH || !buffer[buffer_index])
+                        if ( // Is it the case that the signal looks like a single peak over 1 cycle? If so then record it as such.
+                            ((($unsigned(buffer_index - 1) % BUFFER_WIDTH != rear) && !buffer[$unsigned(buffer_index - 1) % BUFFER_WIDTH]) && 
+                            (($unsigned(buffer_index + 1) % BUFFER_WIDTH != rear) && !buffer[$unsigned(buffer_index + 1) % BUFFER_WIDTH])) ||
+                            // Alternatively is it the case that this is a one cycle thing if you consider the start of where we're looking as one cycle
+                            ((($unsigned(buffer_index + 1) % BUFFER_WIDTH != rear) && !buffer[$unsigned(buffer_index + 1) % BUFFER_WIDTH]) && i == 0)
+                            )
                         begin
-                            // You have a defined edge
-                            found_start = 1'b1;
+                            port.time_out[1] <= port.counter - (port.value_in - i);
+                            previous_end <= port.counter - (port.value_in - i);
+                            port.data_valid <= 1;
+                            break;
+                            
                         end
-                        else
-                            // You have found a single cycle location
-                            begin
-                                port.time_out[1] <= port.counter - (port.value_in - i);
-                                previous_end <= port.counter - (port.value_in - i);
-                                port.data_valid <= 1;
-                                break;
-                            end
+                        else found_start = 1'b1;
                     end
                     else if (found_start)
                     begin

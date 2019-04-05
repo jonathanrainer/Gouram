@@ -13,16 +13,19 @@ module ex_tracker
     input integer counter,
 
     // Inputs from ID Tracker
-    input logic if_data_ready,
-    input trace_format if_data_i,
+    input logic filtered_data_ready,
+    input integer if_stage_end,
+    input trace_format filtered_data_i,
     
     // Inputs from Memory Phase
     input logic data_mem_req,
     input logic [DATA_ADDR_WIDTH-1:0] data_mem_addr,
     input logic data_mem_rvalid,
+//    input logic branch_decision,
     
     // Outputs to EX Tracker
-   (* dont_touch = "yes" *) output trace_format ex_data_o
+   (* dont_touch = "yes" *) output trace_format ex_data_o,
+   output bit repeat_detected
 );
 
     trace_format trace_element;
@@ -31,14 +34,16 @@ module ex_tracker
     enum bit [2:0] {
             EXECUTION_START =       3'b000,
             GET_DATA_FROM_BUFFER =  3'b001,
-            CHECK_MEMORY_REQS =     3'b010,
-            SCAN_MEMORY_REQ =       3'b011,
-            CHECK_MEMORY_RVALID =   3'b100,
-            SCAN_MEMORY_RVALID =    3'b101,
-            OUTPUT_RESULT =         3'b110
+            CHECK_JUMP_DONE =       3'b010,
+            CHECK_MEMORY_REQS =     3'b011,
+            SCAN_MEMORY_REQ =       3'b100,
+            CHECK_MEMORY_RVALID =   3'b101,
+            SCAN_MEMORY_RVALID =    3'b110,
+            OUTPUT_RESULT =         3'b111
          } state;
          
-    integer previous_end;
+    integer previous_end = 0;
+    integer if_stage_end_buffer_output;
     bit addr_found;
     bit rvalid_time_found;
     bit rvalid_scan_necessary;
@@ -55,6 +60,7 @@ module ex_tracker
         data_mem_rvalid_port.TimeTest
     );
     integer data_mem_rvalid_present;
+
     signal_tracker_value_find  #(SIGNAL_BUFFER_SIZE) data_mem_addr_buffer (
         data_mem_addr_port.ValueFind
     );
@@ -65,9 +71,9 @@ module ex_tracker
      bit data_valid; 
      trace_format buffer_output;
      trace_buffer #(TRACE_BUFFER_SIZE, trace_format) t_buffer (
-        .clk(clk), .rst_n(rst_n), .ready_signal(if_data_ready), .trace_element_in(if_data_i), 
+        .clk(clk), .rst_n(rst_n), .ready_signal(filtered_data_ready), .trace_element_in(filtered_data_i), 
         .data_request(data_request), .data_present(data_present), .trace_element_out(buffer_output),
-        .data_valid(data_valid)    
+        .data_valid(data_valid), .if_stage_end_in(if_stage_end), .if_stage_end_out(if_stage_end_buffer_output)
      );
   
             
@@ -93,11 +99,20 @@ module ex_tracker
                 if (data_valid)
                 begin
                     data_request <= 1'b0;
-                    // Copy in data to the internal trace buffer
-                    trace_element <= buffer_output;
-                    // Set ex_ready queue input values to read back in next cycle.
-                    check_past_data_mem_req_values(counter - previous_end + 1);
-                    state <= CHECK_MEMORY_REQS;
+                    // If the repeat marker is found then it needs to be communicated to the outside world.
+                    if (buffer_output.instruction == 32'h00002083) 
+                    begin
+                        repeat_detected <= 1'b1;
+                        state <= EXECUTION_START;
+                    end
+                    else
+                    begin 
+                        // Copy in data to the internal trace buffer
+                        trace_element <= buffer_output;
+                        // Set ex_ready queue input values to read back in next cycle.
+                        check_past_data_mem_req_values((if_stage_end_buffer_output > previous_end) ? counter - if_stage_end_buffer_output: counter - previous_end+1);
+                        state <= CHECK_MEMORY_REQS;
+                    end
                 end
             end
             CHECK_MEMORY_REQS:
@@ -211,14 +226,15 @@ module ex_tracker
         addr_found <= 1'b0;
         rvalid_time_found <= 1'b0;
         rvalid_scan_necessary <= 1'b0;
+        repeat_detected <= 0;
     endtask
-        
+    
     task check_past_data_mem_req_values(input integer queue_input);
-        data_mem_req_port.value_in <= queue_input;
-        if (data_mem_req) data_mem_req_present <= counter;
-        else data_mem_req_present <= -1;
-        data_mem_req_port.recalculate_time <= 1'b1;
-    endtask
+            data_mem_req_port.value_in <= queue_input;
+            if (data_mem_req) data_mem_req_present <= counter;
+            else data_mem_req_present <= -1;
+            data_mem_req_port.recalculate_time <= 1'b1;
+        endtask
     
     task check_past_data_mem_rvalid_values(input integer queue_input);
             data_mem_rvalid_port.value_in <= queue_input;
