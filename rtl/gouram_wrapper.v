@@ -13,8 +13,11 @@ module gouram_wrapper
     input jump_done,
     input branch_decision,
     input is_decoding,
+    input pc_set,
+    input branch_req,
     
     // Instruction Memory Ports
+    input                               instr_req,
     input                               instr_rvalid,
     input [`INSTR_DATA_WIDTH-1:0]       instr_rdata,
     input [`INSTR_ADDR_WIDTH-1:0]       instr_addr,
@@ -44,6 +47,9 @@ gouram
 	.jump_done(jump_done),
 	.branch_decision(branch_decision),
 	.is_decoding(is_decoding),
+	.branch_req(branch_req),
+	.pc_set(pc_set),
+	.instr_req(instr_req),
 	.instr_rvalid(instr_rvalid),
 	.instr_rdata(instr_rdata),
 	.instr_addr(instr_addr),

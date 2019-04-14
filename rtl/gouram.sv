@@ -16,8 +16,11 @@ module gouram
     input logic jump_done,
     input logic branch_decision,
     input logic is_decoding,
+    input logic pc_set,
+    input logic branch_req,
 
     // Instruction Memory Ports
+    input logic                             instr_req,
     input logic                             instr_rvalid,
     input logic [INSTR_DATA_WIDTH-1:0]      instr_rdata,
     input logic [INSTR_ADDR_WIDTH-1:0]      instr_addr,

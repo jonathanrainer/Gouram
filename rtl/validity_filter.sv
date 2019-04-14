@@ -162,7 +162,7 @@ module validity_filter
                         if(jump_done_port.time_out[0] != -1 && jump_done_port.time_out[0] <= decode_phase[1]) state <= FILTER_START;
                         else 
                         begin
-                            check_past_branch_decision_values(counter-(decode_phase[1]) +1);
+                            check_past_branch_decision_values(counter-(decode_phase[1]));
                             state <= CHECK_BRANCH_DECISION;
                         end
                     end
@@ -172,7 +172,7 @@ module validity_filter
                     if (branch_decision_port.data_valid)
                     begin
                         branch_decision_port.recalculate_back_cycle <= 1'b0;
-                        if(branch_decision_port.signal_recall) state <= FILTER_START;
+                        if(branch_decision_port.signal_recall && trace_element.instruction != 32'h00002083) state <= FILTER_START;
                         else state <= OUTPUT_DATA;
                     end
                 end
