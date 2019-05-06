@@ -185,7 +185,7 @@ module ex_tracker
                     end
                     // If all these fail then the memory rvalid hasn't yet been asserted and
                     // it just needs to be polled every cycle until it does.
-                    else rvalid_scan_necessary = 1'b1;
+                    else rvalid_scan_necessary <= 1'b1;
                 end
                 if ((data_mem_rvalid_present == -1) && data_mem_rvalid)  data_mem_rvalid_present = counter;
                 // Make a decision as to which state to go to next

@@ -90,7 +90,7 @@ module if_tracker
                 // Effectively this acts as a timeout state, if you're still waiting on a branch and the next rvalid occurs then you need to take action and stop waiting.
                 if (instr_rvalid)
                 begin
-                    if (check_load_store(instr_rdata))
+                    if (check_load_store(instr_rdata) && !((jump_done || branch_decision)))
                     begin
                         if_data_o.instruction <= instr_rdata;
                         if_data_o.instr_addr <= cached_addr;

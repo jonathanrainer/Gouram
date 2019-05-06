@@ -71,7 +71,7 @@ module signal_tracker_time_test
         // The input to this always block is the number of cycles back in time you want to look. 
         // So if the current time is 
         // 12 and you set value_in as 3 cycles 11, 10 and 9 will be checked.
-        if (port.recalculate_time)
+        if (port.recalculate_time && !port.data_valid)
         begin
             port.time_out <= {-1,-1};
             if (!(port.counter < BUFFER_WIDTH && port.value_in > port.counter || port.value_in > BUFFER_WIDTH))
@@ -121,6 +121,7 @@ module signal_tracker_time_test
                         if (buffer[buffer_index] && ((buffer_index + 1) % BUFFER_WIDTH) != (rear + 1) % BUFFER_WIDTH && !buffer[(buffer_index + 1) % BUFFER_WIDTH]) 
                         begin
                             port.time_out[1] <= port.counter - (port.value_in - i);
+                            previous_end <= port.counter - (port.value_in - i);
                             port.data_valid <= 1;
                             break;
                         end

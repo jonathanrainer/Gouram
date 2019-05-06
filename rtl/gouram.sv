@@ -34,13 +34,11 @@ module gouram
     // Trace output port
     output trace_format trace_data_o,
     output bit trace_capture_enable,
-    output bit lock,
-    output integer signed counter_o
+    output bit lock
 );
 
     // Monotonic Counter to Track Timing for Each Component
     (* dont_touch = "yes" *) integer signed counter;
-    assign counter_o = counter;
 
     logic if_data_ready;
     logic filtered_data_ready;
@@ -55,6 +53,7 @@ module gouram
     );
     validity_filter #(TRACE_BUFFER_SIZE, trace_format, SIGNALS_TO_BUFFER, INSTR_DATA_WIDTH) v_f (
         .if_data_i(if_data_o), .if_stage_end_i(if_stage_end_vf), .if_stage_end_o(if_stage_end_trans), 
+        .data_rvalid(data_mem_rvalid),
         .*
     );
     ex_tracker #(DATA_ADDR_WIDTH, SIGNALS_TO_BUFFER, TRACE_BUFFER_SIZE, trace_format) ex_tr (
@@ -86,10 +85,10 @@ module gouram
             counter <= counter + 1;
             if (repeat_detected) 
             begin
-                assign trace_capture_enable = 1'b0;
+                trace_capture_enable <= 1'b0;
                 lock <= 1'b1;
             end
-            else assign trace_capture_enable = 1'b1;
+            else trace_capture_enable <= 1'b1;
         end
     end
     

@@ -22,6 +22,7 @@ module validity_filter
     input bit is_decoding,
     input bit branch_decision,
     input bit jump_done,
+    input bit data_rvalid,
     
     // Outputs
     output trace_format filtered_data,
@@ -67,6 +68,7 @@ module validity_filter
     // Internal State
     integer previous_end;
     integer signed decode_phase [1:0]; 
+    integer last_rvalid;
     
     // State Machine to Control Unit
     enum bit [2:0] {
@@ -144,11 +146,20 @@ module validity_filter
                 is_decoding_buffered <= is_decoding;
                 end
                 SCAN_FOR_DECODE_PHASE:
-                if (decode_phase[0] != -1 && !is_decoding) 
+                if (decode_phase[0] != -1) 
                 begin
-                    decode_phase[1] <= counter;
-                    check_past_jump_done_values(counter-if_stage_end_buffer_output+1);
-                    state <= CHECK_JUMP_DONE;
+                    if (!is_decoding)
+                    begin
+                        decode_phase[1] <= counter-1;
+                        check_past_jump_done_values(counter-if_stage_end_buffer_output+1);
+                        state <= CHECK_JUMP_DONE;
+                    end
+                    else if (last_rvalid < counter && last_rvalid > decode_phase[0])
+                    begin
+                        decode_phase[1] <= last_rvalid;
+                        check_past_jump_done_values(counter-if_stage_end_buffer_output+1);
+                        state <= CHECK_JUMP_DONE;
+                    end
                 end
                 else if (decode_phase[0] == -1 && is_decoding)
                 begin
@@ -185,6 +196,7 @@ module validity_filter
                     previous_end <= decode_phase[1];
                 end
             endcase
+            if (data_rvalid) last_rvalid <= counter;
         end
     end
     

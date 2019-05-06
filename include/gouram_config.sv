@@ -10,6 +10,3 @@
 `ifndef DATA_ADDR_WIDTH
 `define DATA_ADDR_WIDTH 16
 `endif
-`ifndef TRACE_BUFFER_SIZE
-`define TRACE_BUFFER_SIZE 64
-`endif

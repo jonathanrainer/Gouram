@@ -31,8 +31,7 @@ module gouram_wrapper
     
     output [127:0] trace_data_o,
     output trace_capture_enable,
-    output lock,
-    output [31:0] counter
+    output lock
 );
    
 
@@ -59,8 +58,7 @@ gouram
 	.data_mem_addr(data_mem_addr),
 	.trace_data_o(trace_data_o),
 	.trace_capture_enable(trace_capture_enable),
-	.lock(lock),
-	.counter_o(counter)
+	.lock(lock)
 );
 
 endmodule
