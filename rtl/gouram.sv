@@ -18,6 +18,7 @@ module gouram
     input logic is_decoding,
     input logic pc_set,
     input logic branch_req,
+    input logic id_ready,
 
     // Instruction Memory Ports
     input logic                             instr_req,
@@ -34,35 +35,32 @@ module gouram
     // Trace output port
     output trace_format trace_data_o,
     output bit trace_capture_enable,
-    output bit lock
+    output bit lock,
+    
+    // Debug Outputs
+    output integer input_decode_phase,
+    output integer decode_phase_start,
+    output integer decode_phase_end,
+    output integer counter_o
 );
 
     // Monotonic Counter to Track Timing for Each Component
     (* dont_touch = "yes" *) integer signed counter;
 
     logic if_data_ready;
-    logic filtered_data_ready;
     trace_format if_data_o;
-    trace_format filtered_data;
-    integer if_stage_end_vf;
-    integer if_stage_end_trans;
+    integer dec_stage_end;
     bit repeat_detected;
     
-    if_tracker #(INSTR_ADDR_WIDTH, INSTR_DATA_WIDTH, trace_format) if_tr (
-        .if_stage_end(if_stage_end_vf), .*
-    );
-    validity_filter #(TRACE_BUFFER_SIZE, trace_format, SIGNALS_TO_BUFFER, INSTR_DATA_WIDTH) v_f (
-        .if_data_i(if_data_o), .if_stage_end_i(if_stage_end_vf), .if_stage_end_o(if_stage_end_trans), 
-        .data_rvalid(data_mem_rvalid),
-        .*
+    if_tracker #(INSTR_ADDR_WIDTH, INSTR_DATA_WIDTH, TRACE_BUFFER_SIZE, trace_format, 8) if_tr (
+        .decode_phase_end(is_decoding && id_ready), .*
     );
     ex_tracker #(DATA_ADDR_WIDTH, SIGNALS_TO_BUFFER, TRACE_BUFFER_SIZE, trace_format) ex_tr (
         .clk(clk),
         .rst_n(rst_n),
         .counter(counter),
-        .filtered_data_ready(filtered_data_ready),
-        .if_stage_end(if_stage_end_trans),
-        .filtered_data_i(filtered_data),
+        .dec_stage_end(dec_stage_end),
+        .if_data_i(if_data_o),
         .data_mem_req(data_mem_req),
         .data_mem_addr(data_mem_addr),
         .data_mem_rvalid(data_mem_rvalid),
@@ -83,6 +81,7 @@ module gouram
         else 
         begin   
             counter <= counter + 1;
+            counter_o <= counter + 1;
             if (repeat_detected) 
             begin
                 trace_capture_enable <= 1'b0;

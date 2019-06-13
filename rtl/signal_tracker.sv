@@ -20,12 +20,12 @@ module signal_tracker_value_find
         // Data Acquisition Part (Runs Every Cycle)
         rear <= (rear + 1) % BUFFER_WIDTH;
         buffer[rear] <= port.tracked_signal;
-        if (port.recalculate_back_cycle) 
+        if (port.recalculate_back_cycle && !port.data_valid) 
         begin
             port.data_valid <= 1'b1;
             port.signal_recall <= buffer[$unsigned(rear-(port.cycles_back_to_recall)) % BUFFER_WIDTH];
         end
-        if (port.recalculate_back_cycle && port.data_valid) port.data_valid <= 1'b0;
+        if (!port.recalculate_back_cycle && port.data_valid) port.data_valid <= 1'b0;
         if (!port.rst_n)
         begin
             initialise_module();
@@ -40,6 +40,7 @@ module signal_tracker_value_find
     task initialise_module();
         rear <= 0;
         buffer <= '{default:0};
+        port.data_valid <= 1'b0;
     endtask
     
 endmodule

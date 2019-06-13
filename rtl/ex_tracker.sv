@@ -13,9 +13,9 @@ module ex_tracker
     input integer counter,
 
     // Inputs from ID Tracker
-    input logic filtered_data_ready,
-    input integer if_stage_end,
-    input trace_format filtered_data_i,
+    input logic if_data_ready,
+    input integer dec_stage_end,
+    input trace_format if_data_i,
     
     // Inputs from Memory Phase
     input logic data_mem_req,
@@ -43,7 +43,7 @@ module ex_tracker
          } state;
          
     integer previous_end = 0;
-    integer if_stage_end_buffer_output;
+    integer dec_stage_end_buffer_output;
     bit addr_found;
     bit rvalid_time_found;
     bit rvalid_scan_necessary;
@@ -71,9 +71,9 @@ module ex_tracker
      bit data_valid; 
      trace_format buffer_output;
      trace_buffer #(TRACE_BUFFER_SIZE, trace_format) t_buffer (
-        .clk(clk), .rst_n(rst_n), .ready_signal(filtered_data_ready), .trace_element_in(filtered_data_i), 
+        .clk(clk), .rst_n(rst_n), .ready_signal(if_data_ready), .trace_element_in(if_data_i), 
         .data_request(data_request), .data_present(data_present), .trace_element_out(buffer_output),
-        .data_valid(data_valid), .if_stage_end_in(if_stage_end), .if_stage_end_out(if_stage_end_buffer_output)
+        .data_valid(data_valid), .dec_stage_end_in(dec_stage_end), .dec_stage_end_out(dec_stage_end_buffer_output)
      );
   
             
@@ -110,7 +110,7 @@ module ex_tracker
                         // Copy in data to the internal trace buffer
                         trace_element <= buffer_output;
                         // Set ex_ready queue input values to read back in next cycle.
-                        check_past_data_mem_req_values((if_stage_end_buffer_output > previous_end) ? counter - if_stage_end_buffer_output: counter - previous_end+1);
+                        check_past_data_mem_req_values(counter - dec_stage_end_buffer_output);
                         state <= CHECK_MEMORY_REQS;
                     end
                 end
@@ -193,7 +193,14 @@ module ex_tracker
                 begin
                     rvalid_time_found <= 1'b0;
                     addr_found <= 1'b0;
-                    if (rvalid_scan_necessary) 
+                    if (rvalid_scan_necessary && data_mem_rvalid)
+                    begin
+                        trace_element.mem_trans_time_end <= counter;
+                        previous_end <= counter;
+                        rvalid_scan_necessary <= 1'b0;
+                        state <= OUTPUT_RESULT;
+                    end
+                    else if (rvalid_scan_necessary) 
                     begin
                         state <= SCAN_MEMORY_RVALID;
                         rvalid_scan_necessary <= 1'b0;

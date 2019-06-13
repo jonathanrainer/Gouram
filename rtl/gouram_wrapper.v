@@ -15,6 +15,7 @@ module gouram_wrapper
     input is_decoding,
     input pc_set,
     input branch_req,
+    input id_ready,
     
     // Instruction Memory Ports
     input                               instr_req,
@@ -31,7 +32,12 @@ module gouram_wrapper
     
     output [127:0] trace_data_o,
     output trace_capture_enable,
-    output lock
+    output lock,
+    
+    output [31:0] input_decode_phase,
+    output [31:0] decode_phase_start,
+    output [31:0] decode_phase_end,
+    output [31:0] counter
 );
    
 
@@ -48,6 +54,7 @@ gouram
 	.is_decoding(is_decoding),
 	.branch_req(branch_req),
 	.pc_set(pc_set),
+	.id_ready(id_ready),
 	.instr_req(instr_req),
 	.instr_rvalid(instr_rvalid),
 	.instr_rdata(instr_rdata),
@@ -58,7 +65,11 @@ gouram
 	.data_mem_addr(data_mem_addr),
 	.trace_data_o(trace_data_o),
 	.trace_capture_enable(trace_capture_enable),
-	.lock(lock)
+	.lock(lock),
+	.input_decode_phase(input_decode_phase),
+	.decode_phase_start(decode_phase_start),
+	.decode_phase_end(decode_phase_end),
+	.counter_o(counter)
 );
 
 endmodule

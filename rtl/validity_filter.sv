@@ -27,7 +27,12 @@ module validity_filter
     // Outputs
     output trace_format filtered_data,
     output integer if_stage_end_o,
-    output bit filtered_data_ready
+    output bit filtered_data_ready,
+    
+    // Debug Outputs
+    output integer input_decode_phase,
+    output integer decode_phase_start,
+    output integer decode_phase_end
 );
 
     // Buffer for Traces that come from IF Tracker
@@ -167,6 +172,8 @@ module validity_filter
                 end
                 CHECK_JUMP_DONE:
                 begin
+                    decode_phase_start <= decode_phase[0];
+                    decode_phase_end <= decode_phase[1];
                     if (jump_done_port.data_valid)
                     begin
                         jump_done_port.recalculate_time <= 0;
@@ -214,6 +221,7 @@ module validity_filter
     
     task check_past_is_decoding_values(input integer queue_input);
             is_decoding_port.value_in <= queue_input;
+            input_decode_phase <= queue_input;
             is_decoding_buffered <= is_decoding;
             is_decoding_port.recalculate_time <= 1'b1;
     endtask 
