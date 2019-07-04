@@ -3,7 +3,8 @@ include "../include/gouram_config.sv";
 module gouram_wrapper
 #(
     parameter TRACE_BUFFER_SIZE = 8,
-    parameter SIGNALS_TO_BUFFER = 64
+    parameter SIGNALS_TO_BUFFER = 64,
+    parameter IF_TRACKER_BUFFER_SIZE = 8
 )
 (   
     input clk,
@@ -34,16 +35,13 @@ module gouram_wrapper
     output trace_capture_enable,
     output lock,
     
-    output [31:0] input_decode_phase,
-    output [31:0] decode_phase_start,
-    output [31:0] decode_phase_end,
     output [31:0] counter
 );
    
 
  gouram
 #(
-    `INSTR_DATA_WIDTH, `INSTR_ADDR_WIDTH, `DATA_ADDR_WIDTH, TRACE_BUFFER_SIZE, SIGNALS_TO_BUFFER
+    `INSTR_DATA_WIDTH, `INSTR_ADDR_WIDTH, `DATA_ADDR_WIDTH, TRACE_BUFFER_SIZE, SIGNALS_TO_BUFFER, IF_TRACKER_BUFFER_SIZE
 )
 gouram
 (
@@ -66,9 +64,6 @@ gouram
 	.trace_data_o(trace_data_o),
 	.trace_capture_enable(trace_capture_enable),
 	.lock(lock),
-	.input_decode_phase(input_decode_phase),
-	.decode_phase_start(decode_phase_start),
-	.decode_phase_end(decode_phase_end),
 	.counter_o(counter)
 );
 

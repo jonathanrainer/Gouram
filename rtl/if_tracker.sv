@@ -64,14 +64,12 @@ module if_tracker
         bit finished;
     } tracking_buffer_format;
     
-    (* dont_touch = "yes" *) tracking_buffer_format tracking_buffer [0:TRACKING_BUFFER_SIZE-1];
-    bit signed [$clog2(TRACKING_BUFFER_SIZE):0] if_pointer;
-    bit [$clog2(TRACKING_BUFFER_SIZE):0] branch_pointer;
-    bit [$clog2(TRACKING_BUFFER_SIZE):0] output_pointer;
-
-    bit jump_done_buffer = 0;
-    bit [INSTR_DATA_WIDTH-1:0] cached_instruction = 0;
-    
+    (* dont_touch = "yes" *) (* ram_style = "distributed" *) tracking_buffer_format tracking_buffer [0:TRACKING_BUFFER_SIZE-1];
+    (* dont_touch = "yes" *) bit signed [$clog2(TRACKING_BUFFER_SIZE):0] if_pointer;
+    (* dont_touch = "yes" *) bit [$clog2(TRACKING_BUFFER_SIZE):0] branch_pointer;
+    (* dont_touch = "yes" *) bit [$clog2(TRACKING_BUFFER_SIZE):0] jump_pointer;
+    (* dont_touch = "yes" *) bit [$clog2(TRACKING_BUFFER_SIZE):0] output_pointer;
+    integer pc_set_time;
     integer cut_off_time; 
     bit branching;
 
@@ -150,7 +148,8 @@ module if_tracker
                begin
                    tracking_buffer[earliest_index].branch_dec <= jump_done;
                    tracking_buffer[earliest_index].branch_dec_time <= counter;
-                   cut_off_time <= counter;
+                   if (pc_set) cut_off_time <= counter;
+                   else cut_off_time <= pc_set_time;
                    branching <= 1'b1;
                end
                // Outcome 3
@@ -163,6 +162,7 @@ module if_tracker
            end
            else tracking_buffer[earliest_index].finished <= 1'b1;
         end
+	if (pc_set) pc_set_time <= counter;
         unique case (branch_state)
             IDLE:
             begin
@@ -172,7 +172,8 @@ module if_tracker
                 if (branch_decision)
                 begin
                     tracking_buffer[branch_pointer].branch_dec_time <= counter;
-                    cut_off_time <= counter;
+                    if (pc_set) cut_off_time <= counter;
+			        else cut_off_time <= pc_set_time;
                     branching <= 1'b1;
                 end
                 tracking_buffer[branch_pointer].branch_dec <= branch_decision;
@@ -212,6 +213,7 @@ module if_tracker
                 output_state <= FIND_DATA;
              end
         endcase;
+
     end
 
     // Initialise the whole trace unit
@@ -225,6 +227,7 @@ module if_tracker
             if_pointer <= -1;
             if_state <= TRACK_REQ;
             cut_off_time <= 0;
+            pc_set_time <= 0;
         end
     endtask
     
@@ -243,64 +246,3 @@ module if_tracker
     endfunction
 
 endmodule
-
-// WAIT_IS_DECODING:
-//            begin
-//                // Effectively this acts as a timeout state, if you're still waiting on a branch and the next rvalid occurs then you need to take action and stop waiting.
-//                if (is_decoding) state <= WAIT_BRANCH_DECISION;
-//                if (jump_done || (branch_req && !branch_decision)) 
-//                begin
-//                   if (instr_gnt) 
-//                   begin
-//                       cached_addr <= instr_addr;
-//                       state <= TRACK_RVALID;
-//                   end
-//                   else if (instr_req) state <= TRACK_GRANT;
-//                   else state <= TRACK_REQ;
-//                end 
-//                else if (pc_set) state <= TRACK_REQ;
-//                else if (instr_gnt) cached_addr <= instr_addr;
-//                else if (instr_rvalid && check_load_store(instr_rdata))
-//                begin
-//                    output_buffer[temp_pointer+1].instr_addr <= cached_addr;
-//                    output_buffer[temp_pointer+1].instruction <= instr_rdata;
-//                    output_buffer[temp_pointer+1].if_stage_end <= counter;
-//                    temp_pointer <= temp_pointer + 1;
-//                end
-//            end
-//            WAIT_BRANCH_DECISION:
-//            begin
-//                if(!is_decoding)
-//                begin
-//                   if (!branch_decision && branch_req)
-//                   begin
-//                        dont_update = 1'b1;
-//                        absolute_pointer <= temp_pointer;
-//                   end
-//                   if (instr_gnt) 
-//                   begin
-//                      cached_addr <= instr_addr;
-//                      state <= TRACK_RVALID;
-//                   end
-//                   else if (instr_req) state <= TRACK_GRANT;
-//                   else state <= TRACK_REQ;
-//                end
-//                if (instr_gnt) cached_addr <= instr_addr;
-//                else if (instr_rvalid && check_load_store(instr_rdata))
-//                begin
-//                   output_buffer[temp_pointer+1].instr_addr <= cached_addr;
-//                   output_buffer[temp_pointer+1].instruction <= instr_rdata;
-//                   output_buffer[temp_pointer+1].if_stage_end <= instr_rdata;
-//                   temp_pointer <= temp_pointer + 1;
-//                end       
-//            end
-//        endcase
-
-//        if (!dont_update)
-//        begin
-//            unique case (pointer_flags)
-//                2'b00, 2'b11: absolute_pointer <= absolute_pointer;
-//                2'b01: absolute_pointer <= absolute_pointer + 1;
-//                2'b10: absolute_pointer <= absolute_pointer - 1;
-//            endcase;
-//        end

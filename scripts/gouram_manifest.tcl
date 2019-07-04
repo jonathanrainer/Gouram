@@ -8,7 +8,6 @@ set GouramRTLFiles {
 	gouram.sv
 	gouram_wrapper.v
 	signal_tracker_if.sv
-	validity_filter.sv
 }
 
 set GouramIncludeFiles {

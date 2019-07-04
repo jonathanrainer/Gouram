@@ -6,7 +6,8 @@ module gouram
     parameter INSTR_ADDR_WIDTH = 16,
     parameter DATA_ADDR_WIDTH = 32,
     parameter TRACE_BUFFER_SIZE = 8,
-    parameter SIGNALS_TO_BUFFER = 64
+    parameter SIGNALS_TO_BUFFER = 64,
+    parameter IF_TRACKER_BUFFER_SIZE = 8
 )
 (   
     input logic clk,
@@ -37,10 +38,6 @@ module gouram
     output bit trace_capture_enable,
     output bit lock,
     
-    // Debug Outputs
-    output integer input_decode_phase,
-    output integer decode_phase_start,
-    output integer decode_phase_end,
     output integer counter_o
 );
 
@@ -52,7 +49,7 @@ module gouram
     integer dec_stage_end;
     bit repeat_detected;
     
-    if_tracker #(INSTR_ADDR_WIDTH, INSTR_DATA_WIDTH, TRACE_BUFFER_SIZE, trace_format, 8) if_tr (
+    if_tracker #(INSTR_ADDR_WIDTH, INSTR_DATA_WIDTH, TRACE_BUFFER_SIZE, trace_format, IF_TRACKER_BUFFER_SIZE) if_tr (
         .decode_phase_end(is_decoding && id_ready), .*
     );
     ex_tracker #(DATA_ADDR_WIDTH, SIGNALS_TO_BUFFER, TRACE_BUFFER_SIZE, trace_format) ex_tr (
@@ -67,6 +64,8 @@ module gouram
         .ex_data_o(trace_data_o),
         .*
     );
+
+    assign counter_o = counter;
     
     initial
     begin
@@ -81,7 +80,6 @@ module gouram
         else 
         begin   
             counter <= counter + 1;
-            counter_o <= counter + 1;
             if (repeat_detected) 
             begin
                 trace_capture_enable <= 1'b0;
