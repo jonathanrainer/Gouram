@@ -25,6 +25,7 @@ module ex_tracker
     
     // Outputs to EX Tracker
    (* dont_touch = "yes" *) output trace_format ex_data_o,
+   output bit trace_ready,
    output bit repeat_detected
 );
 
@@ -88,6 +89,7 @@ module ex_tracker
         unique case(state)
             EXECUTION_START:
             begin
+                trace_ready <= 1'b0;
                 if (data_present)
                 begin
                     data_request <= 1'b1;
@@ -172,16 +174,22 @@ module ex_tracker
                     begin
                         trace_element.mem_trans_time_end <= data_mem_rvalid_port.time_out[0];
                         previous_end <= data_mem_rvalid_port.time_out[0];
+                        data_mem_req_port.previous_end_update <= 1'b1;
+                        data_mem_req_port.new_previous_end <= data_mem_rvalid_port.time_out[0];
                     end
                     else if (data_mem_rvalid_present != -1) 
                     begin
                         trace_element.mem_trans_time_end <= data_mem_rvalid_present;
                         previous_end <= data_mem_rvalid_present;
+                        data_mem_req_port.previous_end_update <= 1'b1;
+                        data_mem_req_port.new_previous_end <= data_mem_rvalid_present;
                     end
                     else if (data_mem_rvalid) 
                     begin
                         trace_element.mem_trans_time_end <= counter;
                         previous_end <= counter;
+                        data_mem_req_port.previous_end_update <= 1'b1;
+                        data_mem_req_port.new_previous_end <= counter;
                     end
                     // If all these fail then the memory rvalid hasn't yet been asserted and
                     // it just needs to be polled every cycle until it does.
@@ -214,12 +222,16 @@ module ex_tracker
                 begin 
                     trace_element.mem_trans_time_end <= counter;
                     previous_end <= counter;
+                    data_mem_req_port.previous_end_update <= 1'b1;
+                    data_mem_req_port.new_previous_end <= counter;
                     state <= OUTPUT_RESULT;
                 end 
             end
             OUTPUT_RESULT:
             begin
+                trace_ready <= 1'b1;
                 ex_data_o <= trace_element;
+                data_mem_req_port.previous_end_update <= 1'b0;
                 state <= EXECUTION_START;
             end
         endcase

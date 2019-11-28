@@ -1,8 +1,8 @@
 package gouram_datatypes;
 
-    localparam INSTR_ADDR_WIDTH = 16;
+    localparam INSTR_ADDR_WIDTH = 32;
     localparam INSTR_DATA_WIDTH = 32;
-    localparam DATA_ADDR_WIDTH = 16;
+    localparam DATA_ADDR_WIDTH = 32;
     localparam TDATA_WIDTH = 32;
     
     typedef struct packed {

@@ -66,6 +66,9 @@ module signal_tracker_time_test
         // Data Acquisition Part (Runs Every Cycle)
         rear <= (rear + 1) % BUFFER_WIDTH;
         buffer[rear] <= port.tracked_signal;
+        
+        if (port.previous_end_update && port.new_previous_end < previous_end) previous_end <= port.new_previous_end;
+        
         // Timing Check (Finding start and end times)
             
         // SEMANTIC DECISION //

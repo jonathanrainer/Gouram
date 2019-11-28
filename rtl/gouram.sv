@@ -37,8 +37,10 @@ module gouram
     output trace_format trace_data_o,
     output bit trace_capture_enable,
     output bit lock,
+    output bit trace_ready,
     
-    output integer counter_o
+    output integer counter_o,
+    output integer mem_req_count
 );
 
     // Monotonic Counter to Track Timing for Each Component

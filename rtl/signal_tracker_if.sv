@@ -17,6 +17,8 @@ interface signal_tracker_if
     integer signed time_out [1:0];
     bit [TRACKED_SIGNAL_WIDTH-1:0] signal_recall;
     bit data_valid;
+    bit previous_end_update;
+    integer new_previous_end;
     
     modport TimeTest 
     (
@@ -26,6 +28,8 @@ interface signal_tracker_if
         input tracked_signal,
         input value_in,
         input recalculate_time,
+        input previous_end_update,
+        input new_previous_end,
         output time_out,
         output data_valid
     );

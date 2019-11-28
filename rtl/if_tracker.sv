@@ -28,6 +28,7 @@ module if_tracker
     // Outputs
     output logic if_data_ready,
     output integer dec_stage_end,
+    output integer mem_req_count,
     (* dont_touch = "yes" *) trace_format if_data_o
 );
 
@@ -192,6 +193,7 @@ module if_tracker
                     begin
                         if (check_load_store(tracking_buffer[i].instruction))
                         begin
+                            mem_req_count <= mem_req_count + 1;
                             output_pointer <= i;
                             output_state <= OUTPUT_DATA;
                         end
@@ -228,6 +230,7 @@ module if_tracker
             if_state <= TRACK_REQ;
             cut_off_time <= 0;
             pc_set_time <= 0;
+            mem_req_count <= 0;
         end
     endtask
     
