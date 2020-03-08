@@ -133,13 +133,13 @@ module ex_tracker
                     else if (data_mem_req_present != -1) 
                     begin
                         trace_element.mem_trans_time_start <= data_mem_req_present;
-                        check_past_data_mem_rvalid_values(data_mem_req_present);
+                        check_past_data_mem_rvalid_values(counter-data_mem_req_present);
                         check_past_data_mem_addr_values(counter-data_mem_req_present);
                     end
                     else if (data_mem_req) 
                     begin
                         trace_element.mem_trans_time_start <= counter;
-                        check_past_data_mem_rvalid_values(counter);
+                        check_past_data_mem_rvalid_values(0);
                         check_past_data_mem_addr_values(0);
                     end
                     // If all these fail then the memory req hasn't yet been asserted and
@@ -153,6 +153,7 @@ module ex_tracker
                 if (data_mem_req) 
                 begin 
                     trace_element.mem_trans_time_start <= counter;
+                    check_past_data_mem_rvalid_values(0);
                     check_past_data_mem_addr_values(0);
                     state <= CHECK_MEMORY_RVALID;
                 end

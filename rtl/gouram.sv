@@ -39,8 +39,7 @@ module gouram
     output bit lock,
     output bit trace_ready,
     
-    output integer counter_o,
-    output integer mem_req_count
+    output integer counter_o
 );
 
     // Monotonic Counter to Track Timing for Each Component

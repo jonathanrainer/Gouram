@@ -36,8 +36,7 @@ module gouram_wrapper
     output lock,
     output trace_ready,
     
-    output [31:0] counter,
-    output [31:0] mem_req_count
+    output [31:0] counter
 );
    
 
@@ -67,7 +66,6 @@ gouram
 	.trace_capture_enable(trace_capture_enable),
 	.lock(lock),
 	.counter_o(counter),
-	.mem_req_count(mem_req_count),
 	.trace_ready(trace_ready)
 );
 

@@ -28,7 +28,6 @@ module if_tracker
     // Outputs
     output logic if_data_ready,
     output integer dec_stage_end,
-    output integer mem_req_count,
     (* dont_touch = "yes" *) trace_format if_data_o
 );
 
@@ -96,7 +95,22 @@ module if_tracker
         unique case(if_state)
             TRACK_REQ:
             begin
-                if (instr_req) move_to_grant();
+                if (instr_req)
+                begin
+                    if (instr_gnt)
+                    begin
+                        tracking_buffer[(if_pointer+1) % TRACKING_BUFFER_SIZE] <= '{default: 0};
+                        tracking_buffer[(if_pointer+1) % TRACKING_BUFFER_SIZE].instr_req_start <= counter;
+                        tracking_buffer[(if_pointer+1) % TRACKING_BUFFER_SIZE].instr_addr <= instr_addr;
+                        tracking_buffer[(if_pointer+1) % TRACKING_BUFFER_SIZE].instr_gnt <= counter;
+                        if_pointer <= (if_pointer + 1) % TRACKING_BUFFER_SIZE;
+                        if_state <= TRACK_RVALID;
+                    end
+                    else
+                    begin
+                        if (instr_req) move_to_grant();
+                    end
+                end
             end
             TRACK_GRANT:
             begin
@@ -112,10 +126,13 @@ module if_tracker
                 if (instr_rvalid)  
                 begin
                     if (instr_req) move_to_grant();
-                    else if_state <= TRACK_REQ;
+                    else 
+                    begin
+                        if_state <= TRACK_REQ;
+                        if_pointer <= (if_pointer + 1) % TRACKING_BUFFER_SIZE;
+                    end
                     tracking_buffer[if_pointer].instruction <= instr_rdata;
                     tracking_buffer[if_pointer].instr_rvalid <= counter;
-                    if_pointer <= (if_pointer + 1) % TRACKING_BUFFER_SIZE;
                 end
             end
         endcase
@@ -193,7 +210,6 @@ module if_tracker
                     begin
                         if (check_load_store(tracking_buffer[i].instruction))
                         begin
-                            mem_req_count <= mem_req_count + 1;
                             output_pointer <= i;
                             output_state <= OUTPUT_DATA;
                         end
@@ -230,7 +246,6 @@ module if_tracker
             if_state <= TRACK_REQ;
             cut_off_time <= 0;
             pc_set_time <= 0;
-            mem_req_count <= 0;
         end
     endtask
     
